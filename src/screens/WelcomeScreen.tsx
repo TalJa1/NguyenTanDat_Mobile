@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/RootStack';
 import { getStorageValue } from '../storage/storage';
 
-type WelcomeNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Welcome'>;
+type WelcomeNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Welcome'
+>;
+
+const welcomeImage = require('../assets/welcome.png');
 
 function WelcomeScreen() {
   const navigation = useNavigation<WelcomeNavigationProp>();
@@ -39,58 +45,32 @@ function WelcomeScreen() {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Quan trắc nước</Text>
-        <Text style={styles.subtitle}>
-          Chào mừng bạn đến với ứng dụng quan trắc nước.
-        </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.imageWrapper}>
+        <Image source={welcomeImage} style={styles.image} resizeMode="cover" />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#eff6ff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
   },
-  card: {
+  imageWrapper: {
+    flex: 1,
     width: '100%',
+    overflow: 'hidden',
     backgroundColor: '#ffffff',
-    borderRadius: 24,
-    padding: 24,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 6,
+    shadowOpacity: 0.18,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 10,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#1d4ed8',
-    marginBottom: 14,
-  },
-  subtitle: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#475569',
-    marginBottom: 24,
-  },
-  button: {
-    backgroundColor: '#2563eb',
-    paddingVertical: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '700',
-    fontSize: 16,
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });
 
