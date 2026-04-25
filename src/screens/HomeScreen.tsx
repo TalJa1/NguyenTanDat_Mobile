@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { waterTopics } from '../data/waterTopics';
@@ -45,13 +46,18 @@ function HomeScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.heroCard}>
+      <LinearGradient
+        colors={['#0f172a', '#2563eb', '#3b82f6']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.heroCard}
+      >
         <Text style={styles.heroLabel}>Quan Trắc Nước</Text>
         <Text style={styles.heroTitle}>Thông tin về chất lượng nước</Text>
         <Text style={styles.heroText}>
           Khám phá dữ liệu về pH, khoáng chất, độ cứng, độ đục và lời khuyên quan trắc nước. Chạm vào mỗi chủ đề để đọc chi tiết và lưu ghi chú.
         </Text>
-      </View>
+      </LinearGradient>
 
       <View style={styles.searchCard}>
         <Text style={styles.sectionTitle}>Tìm chủ đề</Text>
