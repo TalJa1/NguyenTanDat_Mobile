@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { RouteProp } from '@react-navigation/native';
 import { HomeStackParamList } from '../navigation/HomeStack';
 import { waterTopics } from '../data/waterTopics';
@@ -73,11 +74,16 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.headerCard}>
+        <LinearGradient
+          colors={['#1e3a8a', '#2563eb', '#93c5fd']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerCard}
+        >
           <Text style={styles.topicTitle}>{topic.title}</Text>
           <Text style={styles.topicSubtitle}>{topic.subtitle}</Text>
           <Text style={styles.topicOverview}>{topic.overview}</Text>
-        </View>
+        </LinearGradient>
 
         {topic.details.map((detail) => (
           <View key={detail.heading} style={styles.detailCard}>
@@ -128,14 +134,13 @@ const styles = StyleSheet.create({
   },
   missingText: { fontSize: 18, color: '#374151', textAlign: 'center' },
   headerCard: {
-    backgroundColor: '#1e40af',
     borderRadius: 18,
     padding: 24,
     marginBottom: 20,
   },
   topicTitle: { color: '#ffffff', fontSize: 26, fontWeight: '800', marginBottom: 10 },
-  topicSubtitle: { color: '#bfdbfe', fontSize: 16, marginBottom: 12 },
-  topicOverview: { color: '#dbeafe', fontSize: 15, lineHeight: 22 },
+  topicSubtitle: { color: '#dbeafe', fontSize: 16, marginBottom: 12 },
+  topicOverview: { color: '#e0f2fe', fontSize: 15, lineHeight: 22 },
   detailCard: {
     backgroundColor: '#ffffff',
     borderRadius: 18,

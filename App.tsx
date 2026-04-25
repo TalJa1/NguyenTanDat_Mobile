@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import BottomTabs from './src/navigation/BottomTabs';
+import RootStack from './src/navigation/RootStack';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -16,7 +16,7 @@ function App() {
       <SafeAreaProvider>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
         <NavigationContainer>
-          <BottomTabs />
+          <RootStack />
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>
