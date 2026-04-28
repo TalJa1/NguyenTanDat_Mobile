@@ -2,15 +2,23 @@ import React from 'react';
 import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './HomeStack';
+import AssistantScreen from '../screens/AssistantScreen';
 import PlaceholderScreen from '../screens/PlaceholderScreen';
 
 const Tab = createBottomTabNavigator();
 
 const ICONS: Record<string, { active: string; inactive: string }> = {
-  Home:          { active: '🏠', inactive: '🏡' },
-  Search:        { active: '🔍', inactive: '🔎' },
-  Notifications: { active: '🔔', inactive: '🔕' },
-  Profile:       { active: '👤', inactive: '👥' },
+  Home:      { active: '🏠', inactive: '🏡' },
+  Assistant: { active: '🤖', inactive: '🧠' },
+  History:   { active: '🕒', inactive: '📜' },
+  Guide:     { active: '📘', inactive: '📗' },
+};
+
+const TAB_LABELS: Record<string, string> = {
+  Home: 'Trang Chủ',
+  Assistant: 'Trợ lý',
+  History: 'Lịch sử',
+  Guide: 'Hướng dẫn',
 };
 
 function BottomTabs() {
@@ -19,6 +27,7 @@ function BottomTabs() {
       initialRouteName="Home"
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarLabel: TAB_LABELS[route.name] ?? route.name,
         tabBarActiveTintColor: '#1f6feb',
         tabBarInactiveTintColor: '#6b7280',
         tabBarStyle: {
@@ -35,20 +44,16 @@ function BottomTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStack} />
+      <Tab.Screen name="Assistant" component={AssistantScreen} />
       <Tab.Screen
-        name="Search"
+        name="History"
         component={PlaceholderScreen}
-        initialParams={{ label: 'Search' }}
+        initialParams={{ label: 'Lịch sử' }}
       />
       <Tab.Screen
-        name="Notifications"
+        name="Guide"
         component={PlaceholderScreen}
-        initialParams={{ label: 'Notifications' }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={PlaceholderScreen}
-        initialParams={{ label: 'Profile' }}
+        initialParams={{ label: 'Hướng dẫn' }}
       />
     </Tab.Navigator>
   );
