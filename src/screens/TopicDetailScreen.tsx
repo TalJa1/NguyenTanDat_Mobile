@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { RouteProp } from '@react-navigation/native';
 import { HomeStackParamList } from '../navigation/HomeStack';
@@ -62,17 +63,17 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
 
   if (!topic) {
     return (
-      <View style={styles.missingContainer}>
+      <SafeAreaView style={styles.missingContainer}>
         <Text style={styles.missingText}>Chủ đề không tồn tại.</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
       <ScrollView contentContainerStyle={styles.content}>
         <LinearGradient
           colors={['#1e3a8a', '#2563eb', '#93c5fd']}
@@ -118,7 +119,8 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
           )}
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

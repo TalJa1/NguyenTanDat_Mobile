@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function PlaceholderScreen({
   route,
@@ -9,10 +10,10 @@ function PlaceholderScreen({
   const label = route.params?.label ?? 'Screen';
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>{label}</Text>
       <Text style={styles.text}>This tab is ready for your next screen.</Text>
-    </View>
+    </SafeAreaView>
   );
 }
 

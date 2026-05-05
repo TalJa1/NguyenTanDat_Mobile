@@ -1,5 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import {
+  Animated,
+  Easing,
   FlatList,
   Image,
   ImageBackground,
@@ -14,6 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
@@ -36,8 +40,31 @@ const initialMessages: Message[] = [
 function AssistantScreen() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [inputText, setInputText] = useState('');
-  const [showMediaOptions, setShowMediaOptions] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedImageUri, setAttachedImageUri] = useState<string | null>(null);
+  const animationValue = React.useRef(new Animated.Value(0)).current;
+
+  const openMediaOptions = () => {
+    animationValue.setValue(0);
+    setIsModalVisible(true);
+    Animated.timing(animationValue, {
+      toValue: 1,
+      duration: 250,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeMediaOptions = () => {
+    Animated.timing(animationValue, {
+      toValue: 0,
+      duration: 200,
+      easing: Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    }).start(() => {
+      setIsModalVisible(false);
+    });
+  };
 
   const addMessage = (message: Message) => {
     setMessages((prev) => [...prev, message]);
@@ -107,7 +134,7 @@ function AssistantScreen() {
   };
 
   const handleMediaOption = async (type: 'gallery' | 'camera') => {
-    setShowMediaOptions(false);
+    closeMediaOptions();
 
     const granted = await requestAndroidPermission(type);
     if (!granted) {
@@ -139,11 +166,12 @@ function AssistantScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
       <ImageBackground
         source={require('../assets/ai_background.jpg')}
         style={styles.background}
@@ -207,7 +235,7 @@ function AssistantScreen() {
         <View style={styles.inputRow}>
           <TouchableOpacity
             style={styles.plusButton}
-            onPress={() => setShowMediaOptions(true)}
+            onPress={openMediaOptions}
           >
             <Text style={styles.plusSign}>+</Text>
           </TouchableOpacity>
@@ -228,13 +256,28 @@ function AssistantScreen() {
       </View>
 
       <Modal
-        visible={showMediaOptions}
+        visible={isModalVisible}
         transparent
-        animationType="fade"
-        onRequestClose={() => setShowMediaOptions(false)}
+        animationType="none"
+        onRequestClose={closeMediaOptions}
       >
-        <Pressable style={styles.modalOverlay} onPress={() => setShowMediaOptions(false)}>
-          <View style={styles.modalContent}>
+        <Pressable style={styles.modalOverlay} onPress={closeMediaOptions}>
+          <Animated.View
+            style={[
+              styles.modalContent,
+              {
+                opacity: animationValue,
+                transform: [
+                  {
+                    translateY: animationValue.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [280, 0],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
             <Text style={styles.modalTitle}>Chọn nguồn ảnh</Text>
             <Pressable
               style={styles.modalOption}
@@ -248,10 +291,11 @@ function AssistantScreen() {
             >
               <Text style={styles.modalOptionText}>Chụp ảnh</Text>
             </Pressable>
-          </View>
+          </Animated.View>
         </Pressable>
       </Modal>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
@@ -45,7 +46,8 @@ function HomeScreen() {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
       <LinearGradient
         colors={['#0f172a', '#2563eb', '#3b82f6']}
         start={{ x: 0, y: 0 }}
@@ -98,6 +100,7 @@ function HomeScreen() {
         ListEmptyComponent={EmptyState}
       />
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
