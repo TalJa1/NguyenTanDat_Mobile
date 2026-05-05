@@ -115,18 +115,34 @@ function GuideScreen() {
     emergency: new Animated.Value(80),
   }).current;
 
-  // Initialize active tab width
+  // Text opacity animations for each tab
+  const textOpacities = React.useRef({
+    cleaning: new Animated.Value(1),
+    classification: new Animated.Value(0),
+    emergency: new Animated.Value(0),
+  }).current;
+
+  // Content slide animation
+  const contentSlideAnim = React.useRef(new Animated.Value(0)).current;
+
+  // Initialize active tab width and text opacity
   React.useEffect(() => {
     const screenWidth = Dimensions.get('window').width - 32; // Account for padding
     const collapsedWidth = 80;
-    const expandedWidth = screenWidth - (collapsedWidth * 2);
+    const expandedWidth = screenWidth - collapsedWidth * 2;
 
     Animated.timing(tabWidths.cleaning, {
       toValue: expandedWidth,
       duration: 400,
       useNativeDriver: false,
     }).start();
-  }, [tabWidths.cleaning]);
+
+    Animated.timing(textOpacities.cleaning, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [tabWidths.cleaning, textOpacities.cleaning]);
 
   const tabs = [
     { key: 'cleaning' as GuideTab, label: 'Làm sạch nước', icon: '🧼' },
@@ -147,35 +163,67 @@ function GuideScreen() {
     }
   };
 
+  const getTabIndex = (tabKey: GuideTab): number => {
+    return tabs.findIndex(tab => tab.key === tabKey);
+  };
+
   const handleTabPress = (tabKey: GuideTab) => {
     if (activeTab === tabKey) return;
 
+    const currentTabIndex = getTabIndex(activeTab);
+    const newTabIndex = getTabIndex(tabKey);
+    const slideDirection = newTabIndex > currentTabIndex ? 1 : -1; // 1 for right, -1 for left
+
     const screenWidth = Dimensions.get('window').width - 32; // Account for padding
     const collapsedWidth = 80; // Width when showing only icon
-    const expandedWidth = screenWidth - (collapsedWidth * 2); // Take remaining space
+    const expandedWidth = screenWidth - collapsedWidth * 2; // Take remaining space
 
-    // Animate all tabs to new widths
-    const animations = [
-      Animated.timing(tabWidths.cleaning, {
-        toValue: tabKey === 'cleaning' ? expandedWidth : collapsedWidth,
-        duration: 400,
-        useNativeDriver: false,
-      }),
-      Animated.timing(tabWidths.classification, {
-        toValue: tabKey === 'classification' ? expandedWidth : collapsedWidth,
-        duration: 400,
-        useNativeDriver: false,
-      }),
-      Animated.timing(tabWidths.emergency, {
-        toValue: tabKey === 'emergency' ? expandedWidth : collapsedWidth,
-        duration: 400,
-        useNativeDriver: false,
-      }),
-    ];
-
-    // Run all animations in parallel
-    Animated.parallel(animations).start(() => {
+    // Step 1: Fade out current text
+    Animated.timing(textOpacities[activeTab], {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: false,
+    }).start(() => {
+      // Step 2: Change content immediately
       setActiveTab(tabKey);
+
+      // Step 3: Prepare slide animation
+      contentSlideAnim.setValue(slideDirection * screenWidth);
+
+      // Step 4: Animate tab widths and slide content simultaneously
+      const widthAnimations = [
+        Animated.timing(tabWidths.cleaning, {
+          toValue: tabKey === 'cleaning' ? expandedWidth : collapsedWidth,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(tabWidths.classification, {
+          toValue: tabKey === 'classification' ? expandedWidth : collapsedWidth,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(tabWidths.emergency, {
+          toValue: tabKey === 'emergency' ? expandedWidth : collapsedWidth,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+      ];
+
+      const slideAnimation = Animated.timing(contentSlideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: false,
+      });
+
+      // Run width and slide animations together
+      Animated.parallel([...widthAnimations, slideAnimation]).start(() => {
+        // Step 5: Fade in new text
+        Animated.timing(textOpacities[tabKey], {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: false,
+        }).start();
+      });
     });
   };
 
@@ -197,7 +245,7 @@ function GuideScreen() {
       </View>
 
       <View style={styles.tabContainer}>
-        {tabs.map((tab) => {
+        {tabs.map(tab => {
           const isExpanded = activeTab === tab.key;
           return (
             <Animated.View
@@ -209,54 +257,88 @@ function GuideScreen() {
               ]}
             >
               <Pressable
-                style={[
-                  styles.tabButton,
-                  isExpanded && styles.activeTabButton,
-                ]}
+                style={[styles.tabButton, isExpanded && styles.activeTabButton]}
                 onPress={() => handleTabPress(tab.key)}
               >
-                <Text style={[styles.tabIcon, isExpanded && styles.activeTabIcon]}>
-                  {tab.icon}
-                </Text>
-                {isExpanded && (
+                <View style={styles.tabContent}>
                   <Text
-                    style={[
-                      styles.tabLabel,
-                      styles.activeTabLabel,
-                    ]}
-                    numberOfLines={1}
+                    style={[styles.tabIcon, isExpanded && styles.activeTabIcon]}
                   >
-                    {tab.label}
+                    {tab.icon}
                   </Text>
-                )}
+                  <Animated.View
+                    style={[
+                      styles.textContainer,
+                      {
+                        opacity: textOpacities[tab.key],
+                        width: textOpacities[tab.key].interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0, 120],
+                        }),
+                        transform: [
+                          {
+                            translateX: textOpacities[tab.key].interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [-20, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.tabLabel,
+                        isExpanded && styles.activeTabLabel,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {tab.label}
+                    </Text>
+                  </Animated.View>
+                </View>
               </Pressable>
             </Animated.View>
           );
         })}
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.sectionTitle}>
-          {tabs.find(tab => tab.key === activeTab)?.label}
-        </Text>
+      <Animated.View
+        style={[
+          styles.contentWrapper,
+          {
+            transform: [{ translateX: contentSlideAnim }],
+          },
+        ]}
+      >
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <Text style={styles.sectionTitle}>
+            {tabs.find(tab => tab.key === activeTab)?.label}
+          </Text>
 
-        {getCurrentGuides().map((guide) => (
-          <Pressable
-            key={guide.id}
-            style={styles.guideCard}
-            onPress={() => handleGuidePress(guide)}
-          >
-            <View style={styles.guideHeader}>
-              <Text style={styles.guideIcon}>{guide.icon}</Text>
-              <View style={styles.guideTextContainer}>
-                <Text style={styles.guideTitle}>{guide.title}</Text>
-                <Text style={styles.guideDescription}>{guide.description}</Text>
+          {getCurrentGuides().map(guide => (
+            <Pressable
+              key={guide.id}
+              style={styles.guideCard}
+              onPress={() => handleGuidePress(guide)}
+            >
+              <View style={styles.guideHeader}>
+                <Text style={styles.guideIcon}>{guide.icon}</Text>
+                <View style={styles.guideTextContainer}>
+                  <Text style={styles.guideTitle}>{guide.title}</Text>
+                  <Text style={styles.guideDescription}>
+                    {guide.description}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <Text style={styles.arrowIcon}>›</Text>
-          </Pressable>
-        ))}
-      </ScrollView>
+              <Text style={styles.arrowIcon}>›</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -285,6 +367,8 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#f8fafc',
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -307,6 +391,8 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
   activeTab: {
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#1d4ed8',
     borderColor: '#1d4ed8',
     shadowOpacity: 0.2,
@@ -314,15 +400,22 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   tabButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   activeTabButton: {
     // backgroundColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  tabContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textContainer: {
+    overflow: 'hidden',
   },
   tabIcon: {
     fontSize: 20,
@@ -341,6 +434,9 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   content: {
+    flex: 1,
+  },
+  contentWrapper: {
     flex: 1,
   },
   contentContainer: {
