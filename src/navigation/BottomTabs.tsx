@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './HomeStack';
+import GuideStack from './GuideStack';
 import AssistantScreen from '../screens/AssistantScreen';
 import PlaceholderScreen from '../screens/PlaceholderScreen';
 
@@ -50,11 +51,7 @@ function BottomTabs() {
         component={PlaceholderScreen}
         initialParams={{ label: 'Lịch sử' }}
       />
-      <Tab.Screen
-        name="Guide"
-        component={PlaceholderScreen}
-        initialParams={{ label: 'Hướng dẫn' }}
-      />
+      <Tab.Screen name="Guide" component={GuideStack} />
     </Tab.Navigator>
   );
 }
