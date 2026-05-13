@@ -82,7 +82,7 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <AppHeader title={topic.title} />
+        <AppHeader  title={topic.title} left={true} />
         <ScrollView contentContainerStyle={styles.content}>
           <LinearGradient
             colors={['#1e3a8a', '#2563eb', '#93c5fd']}
