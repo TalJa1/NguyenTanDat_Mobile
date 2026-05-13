@@ -3,23 +3,26 @@ import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeStack from './HomeStack';
 import GuideStack from './GuideStack';
+import ScanStack from './ScanStack';
 import AssistantScreen from '../screens/AssistantScreen';
-import PlaceholderScreen from '../screens/PlaceholderScreen';
+import ScanHistoryScreen from '../screens/ScanHistoryScreen';
 
 const Tab = createBottomTabNavigator();
 
 const ICONS: Record<string, { active: string; inactive: string }> = {
   Home:      { active: '🏠', inactive: '🏡' },
   Assistant: { active: '🤖', inactive: '🧠' },
+  Scan:      { active: '📷', inactive: '🔍' },
   History:   { active: '🕒', inactive: '📜' },
   Guide:     { active: '📘', inactive: '📗' },
 };
 
 const TAB_LABELS: Record<string, string> = {
-  Home: 'Trang Chủ',
+  Home:      'Trang Chủ',
   Assistant: 'Trợ lý',
-  History: 'Lịch sử',
-  Guide: 'Hướng dẫn',
+  Scan:      'Quét',
+  History:   'Lịch sử',
+  Guide:     'Hướng dẫn',
 };
 
 function BottomTabs() {
@@ -46,11 +49,8 @@ function BottomTabs() {
     >
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Assistant" component={AssistantScreen} />
-      <Tab.Screen
-        name="History"
-        component={PlaceholderScreen}
-        initialParams={{ label: 'Lịch sử' }}
-      />
+      <Tab.Screen name="Scan" component={ScanStack} />
+      <Tab.Screen name="History" component={ScanHistoryScreen} />
       <Tab.Screen name="Guide" component={GuideStack} />
     </Tab.Navigator>
   );
