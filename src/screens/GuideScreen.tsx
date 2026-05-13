@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AppHeader from '../components/AppHeader';
 import { useNavigation } from '@react-navigation/native';
 
 type GuideTab = 'cleaning' | 'classification' | 'emergency';
@@ -236,13 +237,11 @@ function GuideScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Hướng dẫn Quan trắc Nước</Text>
-        <Text style={styles.headerSubtitle}>
-          Thông tin chi tiết về cách xử lý và phân tích chất lượng nước
-        </Text>
-      </View>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <AppHeader
+        title="Hướng dẫn"
+        subtitle="Xử lý và phân tích chất lượng nước"
+      />
 
       <View style={styles.tabContainer}>
         {tabs.map(tab => {
@@ -347,23 +346,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-  },
-  header: {
-    padding: 20,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#6b7280',
-    lineHeight: 24,
   },
   tabContainer: {
     flexDirection: 'row',

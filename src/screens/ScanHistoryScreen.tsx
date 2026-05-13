@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AppHeader from '../components/AppHeader';
 import { useFocusEffect } from '@react-navigation/native';
 import { SCAN_HISTORY_KEY } from './OCRResultScreen';
 import type { ScanRecord } from './OCRResultScreen';
@@ -151,23 +152,18 @@ export default function ScanHistoryScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Hero header */}
-      <View style={styles.hero}>
-        <View style={styles.heroTextBlock}>
-          <Text style={styles.heroTitle}>📋 Lịch sử Scan</Text>
-          <Text style={styles.heroSub}>
-            {records.length > 0
-              ? `${records.length} kết quả đã lưu`
-              : 'Chưa có bản ghi nào'}
-          </Text>
-        </View>
-        {records.length > 0 && (
-          <TouchableOpacity style={styles.clearAllBtn} onPress={handleClearAll}>
-            <Text style={styles.clearAllText}>Xoá tất cả</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <AppHeader
+        title="Lịch sử Scan"
+        subtitle={records.length > 0 ? `${records.length} kết quả đã lưu` : 'Chưa có bản ghi nào'}
+        right={
+          records.length > 0 ? (
+            <TouchableOpacity style={styles.clearAllBtn} onPress={handleClearAll}>
+              <Text style={styles.clearAllText}>Xoá tất cả</Text>
+            </TouchableOpacity>
+          ) : undefined
+        }
+      />
 
       {loading ? (
         <View style={styles.centred}>
@@ -269,23 +265,12 @@ export default function ScanHistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafc' },
 
-  hero: {
-    backgroundColor: '#1d4ed8',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  heroTextBlock: { flex: 1 },
-  heroTitle: { fontSize: 22, fontWeight: '800', color: '#fff', marginBottom: 2 },
-  heroSub: { fontSize: 13, color: '#93c5fd', fontWeight: '500' },
   clearAllBtn: {
     backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 7,
+    marginLeft: 12,
   },
   clearAllText: { color: '#fca5a5', fontSize: 13, fontWeight: '600' },
 

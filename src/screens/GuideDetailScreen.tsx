@@ -315,7 +315,7 @@ function GuideDetailScreen({ route }: GuideDetailProps) {
 
   if (!guideDetail) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['bottom']}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Không tìm thấy thông tin hướng dẫn</Text>
         </View>
@@ -324,7 +324,7 @@ function GuideDetailScreen({ route }: GuideDetailProps) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <LinearGradient
         colors={['#1e3a8a', '#2563eb', '#93c5fd']}
         start={{ x: 0, y: 0 }}

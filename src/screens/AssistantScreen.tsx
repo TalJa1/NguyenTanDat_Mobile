@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AppHeader from '../components/AppHeader';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 type Message = {
@@ -166,7 +167,8 @@ function AssistantScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <AppHeader title="Trợ lý AI" subtitle="Hỏi đáp về chất lượng nước" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

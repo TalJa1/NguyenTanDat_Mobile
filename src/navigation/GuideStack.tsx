@@ -27,7 +27,7 @@ function GuideStack() {
       <Stack.Screen
         name="GuideMain"
         component={GuideScreen}
-        options={{ title: 'Hướng dẫn' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="GuideDetail"

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
+import AppHeader from '../components/AppHeader';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { waterTopics } from '../data/waterTopics';
@@ -46,7 +47,8 @@ function HomeScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <AppHeader title="Trang chủ" />
       <ScrollView contentContainerStyle={styles.content}>
       <LinearGradient
         colors={['#0f172a', '#2563eb', '#3b82f6']}

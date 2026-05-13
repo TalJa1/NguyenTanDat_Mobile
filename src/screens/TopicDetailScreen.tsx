@@ -63,14 +63,14 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
 
   if (!topic) {
     return (
-      <SafeAreaView style={styles.missingContainer}>
+      <SafeAreaView style={styles.missingContainer} edges={['bottom']}>
         <Text style={styles.missingText}>Chủ đề không tồn tại.</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >

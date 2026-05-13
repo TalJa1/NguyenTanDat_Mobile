@@ -23,7 +23,7 @@ function HomeStack() {
       <Stack.Screen
         name="HomeMain"
         component={HomeScreen}
-        options={{ title: 'Trang chủ' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="TopicDetail"
