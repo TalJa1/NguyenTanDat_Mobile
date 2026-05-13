@@ -1,22 +1,20 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import AppHeader from '../components/AppHeader';
 
-type GuideDetailRouteProp = RouteProp<{
-  GuideDetail: {
-    guideId: string;
-    title: string;
-    category: 'cleaning' | 'classification' | 'emergency';
-  };
-}, 'GuideDetail'>;
+type GuideDetailRouteProp = RouteProp<
+  {
+    GuideDetail: {
+      guideId: string;
+      title: string;
+      category: 'cleaning' | 'classification' | 'emergency';
+    };
+  },
+  'GuideDetail'
+>;
 
 interface GuideDetailProps {
   route: GuideDetailRouteProp;
@@ -318,7 +316,9 @@ function GuideDetailScreen({ route }: GuideDetailProps) {
     return (
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Không tìm thấy thông tin hướng dẫn</Text>
+          <Text style={styles.errorText}>
+            Không tìm thấy thông tin hướng dẫn
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -327,17 +327,20 @@ function GuideDetailScreen({ route }: GuideDetailProps) {
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <AppHeader title={guideDetail.title} left={true} />
-      <LinearGradient
-        colors={['#1e3a8a', '#2563eb', '#93c5fd']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <Text style={styles.headerIcon}>{guideDetail.icon}</Text>
-        <Text style={styles.headerTitle}>{guideDetail.title}</Text>
-      </LinearGradient>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+      >
+        <LinearGradient
+          colors={['#1e3a8a', '#2563eb', '#93c5fd']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <Text style={styles.headerIcon}>{guideDetail.icon}</Text>
+          <Text style={styles.headerTitle}>{guideDetail.title}</Text>
+        </LinearGradient>
         {guideDetail.content.map((section, index) => (
           <View key={index} style={styles.section}>
             <Text style={styles.sectionHeading}>{section.heading}</Text>
@@ -368,8 +371,7 @@ const styles = StyleSheet.create({
   header: {
     padding: 24,
     alignItems: 'center',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderRadius: 12,
   },
   headerIcon: {
     fontSize: 48,
