@@ -15,13 +15,18 @@ import LinearGradient from 'react-native-linear-gradient';
 import { RouteProp } from '@react-navigation/native';
 import { HomeStackParamList } from '../navigation/HomeStack';
 import { waterTopics } from '../data/waterTopics';
-import { getStorageValue, setStorageValue, removeStorageValue } from '../storage/storage';
+import {
+  getStorageValue,
+  setStorageValue,
+  removeStorageValue,
+} from '../storage/storage';
+import AppHeader from '../components/AppHeader';
 
 type TopicDetailRouteProp = RouteProp<HomeStackParamList, 'TopicDetail'>;
 
 function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
   const { topicId } = route.params;
-  const topic = waterTopics.find((item) => item.id === topicId);
+  const topic = waterTopics.find(item => item.id === topicId);
   const [note, setNote] = useState('');
   const [loadingNote, setLoadingNote] = useState(true);
 
@@ -43,7 +48,10 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
   const handleSaveNote = async () => {
     try {
       await setStorageValue(`@topic_note_${topicId}`, note);
-      Alert.alert('Lưu thành công', 'Ghi chú của bạn đã được lưu trên thiết bị.');
+      Alert.alert(
+        'Lưu thành công',
+        'Ghi chú của bạn đã được lưu trên thiết bị.',
+      );
     } catch (error) {
       console.warn('Lỗi khi lưu ghi chú', error);
       Alert.alert('Lỗi', 'Không thể lưu ghi chú. Vui lòng thử lại.');
@@ -74,51 +82,55 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-      <ScrollView contentContainerStyle={styles.content}>
-        <LinearGradient
-          colors={['#1e3a8a', '#2563eb', '#93c5fd']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.headerCard}
-        >
-          <Text style={styles.topicTitle}>{topic.title}</Text>
-          <Text style={styles.topicSubtitle}>{topic.subtitle}</Text>
-          <Text style={styles.topicOverview}>{topic.overview}</Text>
-        </LinearGradient>
+        <AppHeader title={topic.title} />
+        <ScrollView contentContainerStyle={styles.content}>
+          <LinearGradient
+            colors={['#1e3a8a', '#2563eb', '#93c5fd']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.headerCard}
+          >
+            <Text style={styles.topicTitle}>{topic.title}</Text>
+            <Text style={styles.topicSubtitle}>{topic.subtitle}</Text>
+            <Text style={styles.topicOverview}>{topic.overview}</Text>
+          </LinearGradient>
 
-        {topic.details.map((detail) => (
-          <View key={detail.heading} style={styles.detailCard}>
-            <Text style={styles.detailHeading}>{detail.heading}</Text>
-            <Text style={styles.detailBody}>{detail.body}</Text>
-          </View>
-        ))}
+          {topic.details.map(detail => (
+            <View key={detail.heading} style={styles.detailCard}>
+              <Text style={styles.detailHeading}>{detail.heading}</Text>
+              <Text style={styles.detailBody}>{detail.body}</Text>
+            </View>
+          ))}
 
-        <View style={styles.noteCard}>
-          <Text style={styles.noteTitle}>Ghi chú cá nhân</Text>
-          <Text style={styles.noteDescription}>
-            Bạn có thể lưu lại thông tin quan trọng cho chủ đề này. Ghi chú được lưu cục bộ trên thiết bị.
-          </Text>
-          <TextInput
-            value={note}
-            onChangeText={setNote}
-            placeholder="Nhập ghi chú của bạn..."
-            placeholderTextColor="#9ca3af"
-            multiline
-            style={styles.noteInput}
-          />
-          <View style={styles.buttonRow}>
-            <Pressable style={styles.saveButton} onPress={handleSaveNote}>
-              <Text style={styles.buttonText}>Lưu</Text>
-            </Pressable>
-            <Pressable style={styles.clearButton} onPress={handleClearNote}>
-              <Text style={styles.clearButtonText}>Xóa</Text>
-            </Pressable>
+          <View style={styles.noteCard}>
+            <Text style={styles.noteTitle}>Ghi chú cá nhân</Text>
+            <Text style={styles.noteDescription}>
+              Bạn có thể lưu lại thông tin quan trọng cho chủ đề này. Ghi chú
+              được lưu cục bộ trên thiết bị.
+            </Text>
+            <TextInput
+              value={note}
+              onChangeText={setNote}
+              placeholder="Nhập ghi chú của bạn..."
+              placeholderTextColor="#9ca3af"
+              multiline
+              style={styles.noteInput}
+            />
+            <View style={styles.buttonRow}>
+              <Pressable style={styles.saveButton} onPress={handleSaveNote}>
+                <Text style={styles.buttonText}>Lưu</Text>
+              </Pressable>
+              <Pressable style={styles.clearButton} onPress={handleClearNote}>
+                <Text style={styles.clearButtonText}>Xóa</Text>
+              </Pressable>
+            </View>
+            {!loadingNote && note.length === 0 && (
+              <Text style={styles.noteHint}>
+                Chưa có ghi chú. Bạn có thể thêm ghi chú ở đây.
+              </Text>
+            )}
           </View>
-          {!loadingNote && note.length === 0 && (
-            <Text style={styles.noteHint}>Chưa có ghi chú. Bạn có thể thêm ghi chú ở đây.</Text>
-          )}
-        </View>
-      </ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -140,7 +152,12 @@ const styles = StyleSheet.create({
     padding: 24,
     marginBottom: 20,
   },
-  topicTitle: { color: '#ffffff', fontSize: 26, fontWeight: '800', marginBottom: 10 },
+  topicTitle: {
+    color: '#ffffff',
+    fontSize: 26,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
   topicSubtitle: { color: '#dbeafe', fontSize: 16, marginBottom: 12 },
   topicOverview: { color: '#e0f2fe', fontSize: 15, lineHeight: 22 },
   detailCard: {
@@ -154,7 +171,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
-  detailHeading: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 10 },
+  detailHeading: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 10,
+  },
   detailBody: { fontSize: 15, color: '#4b5563', lineHeight: 22 },
   noteCard: {
     backgroundColor: '#eff6ff',
@@ -162,7 +184,12 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
   },
-  noteTitle: { fontSize: 18, fontWeight: '700', color: '#1d4ed8', marginBottom: 8 },
+  noteTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1d4ed8',
+    marginBottom: 8,
+  },
   noteDescription: { color: '#1e40af', lineHeight: 22, marginBottom: 16 },
   noteInput: {
     minHeight: 120,

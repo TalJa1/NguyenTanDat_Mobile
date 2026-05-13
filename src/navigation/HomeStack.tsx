@@ -28,7 +28,7 @@ function HomeStack() {
       <Stack.Screen
         name="TopicDetail"
         component={TopicDetailScreen}
-        options={({ route }) => ({ title: route.params.title })}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
