@@ -31,8 +31,8 @@ function GuideStack() {
       />
       <Stack.Screen
         name="GuideDetail"
+        options={{ headerShown: false }}
         component={GuideDetailScreen}
-        options={({ route }) => ({ title: route.params.title })}
       />
     </Stack.Navigator>
   );

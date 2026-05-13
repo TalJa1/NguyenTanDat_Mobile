@@ -8,6 +8,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import AppHeader from '../components/AppHeader';
 
 type GuideDetailRouteProp = RouteProp<{
   GuideDetail: {
@@ -325,6 +326,7 @@ function GuideDetailScreen({ route }: GuideDetailProps) {
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
+      <AppHeader title={guideDetail.title} left={true} />
       <LinearGradient
         colors={['#1e3a8a', '#2563eb', '#93c5fd']}
         start={{ x: 0, y: 0 }}
