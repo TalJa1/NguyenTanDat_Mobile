@@ -24,12 +24,12 @@ interface GuideDetailProps {
 const GUIDE_DETAILS = {
   // Cleaning guides
   boiling: {
-    title: 'Luộc sôi nước',
+    title: 'Đun sôi nước',
     icon: '🔥',
     content: [
       {
-        heading: 'Tại sao cần luộc sôi?',
-        body: 'Luộc sôi là phương pháp đơn giản và hiệu quả nhất để tiêu diệt hầu hết các vi khuẩn, virus và ký sinh trùng trong nước. Nhiệt độ 100°C có thể tiêu diệt 99.9% các tác nhân gây bệnh.',
+        heading: 'Tại sao cần Đun sôi?',
+        body: 'Đun sôi là phương pháp đơn giản và hiệu quả nhất để tiêu diệt hầu hết các vi khuẩn, virus và ký sinh trùng trong nước. Nhiệt độ 100°C có thể tiêu diệt 99.9% các tác nhân gây bệnh.',
       },
       {
         heading: 'Cách thực hiện',

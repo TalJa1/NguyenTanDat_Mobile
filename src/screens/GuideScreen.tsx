@@ -24,8 +24,8 @@ interface GuideItem {
 const CLEANING_GUIDES: GuideItem[] = [
   {
     id: 'boiling',
-    title: 'Luộc sôi',
-    description: 'Cách luộc sôi nước để tiêu diệt vi khuẩn',
+    title: 'Đun sôi',
+    description: 'Cách Đun sôi nước để tiêu diệt vi khuẩn',
     icon: '🔥',
   },
   {
