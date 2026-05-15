@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
@@ -14,7 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TextRecognition from 'react-native-text-recognition';
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { ScanStackParamList } from '../navigation/ScanStack';
@@ -46,12 +47,18 @@ export default function OCRResultScreen({ navigation, route }: Props) {
 
   const runOCR = async () => {
     try {
-      const lines = await TextRecognition.recognize(imageUri);
-      const text = (lines ?? []).join('\n').trim();
+      const result = await TextRecognition.recognize(imageUri);
+      const text = result.blocks
+        .map(b => b.text)
+        .join('\n')
+        .trim();
       setEditedText(text);
       setCharCount(text.length);
-    } catch {
-      Alert.alert('Lỗi OCR', 'Không thể nhận diện văn bản từ ảnh này.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.log('[OCR ERROR]', msg);
+      console.log('[OCR URI]', imageUri);
+      Alert.alert('Lỗi OCR', `Chi tiết lỗi:\n${msg}\n\nURI: ${imageUri}`);
       setEditedText('');
     } finally {
       setRecognizing(false);
@@ -89,7 +96,11 @@ export default function OCRResultScreen({ navigation, route }: Props) {
   const handleDiscard = () => {
     Alert.alert('Bỏ qua?', 'Kết quả scan sẽ không được lưu.', [
       { text: 'Hủy', style: 'cancel' },
-      { text: 'Bỏ qua', style: 'destructive', onPress: () => navigation.goBack() },
+      {
+        text: 'Bỏ qua',
+        style: 'destructive',
+        onPress: () => navigation.goBack(),
+      },
     ]);
   };
 
@@ -102,9 +113,6 @@ export default function OCRResultScreen({ navigation, route }: Props) {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={handleDiscard} style={styles.backBtn}>
-            <Text style={styles.backText}>← Quay lại</Text>
-          </TouchableOpacity>
           <Text style={styles.headerTitle}>Kết quả scan</Text>
           <View style={{ width: 90 }} />
         </View>
@@ -139,8 +147,12 @@ export default function OCRResultScreen({ navigation, route }: Props) {
             {recognizing ? (
               <View style={styles.loadingOCR}>
                 <ActivityIndicator size="large" color="#1d4ed8" />
-                <Text style={styles.loadingText}>Đang nhận diện văn bản...</Text>
-                <Text style={styles.loadingSubText}>Vui lòng chờ trong giây lát</Text>
+                <Text style={styles.loadingText}>
+                  Đang nhận diện văn bản...
+                </Text>
+                <Text style={styles.loadingSubText}>
+                  Vui lòng chờ trong giây lát
+                </Text>
               </View>
             ) : (
               <>
@@ -148,7 +160,8 @@ export default function OCRResultScreen({ navigation, route }: Props) {
                   <View style={styles.emptyOCR}>
                     <Text style={styles.emptyOCRIcon}>🔍</Text>
                     <Text style={styles.emptyOCRText}>
-                      Không nhận diện được văn bản. Hãy thử chụp lại với ánh sáng tốt hơn.
+                      Không nhận diện được văn bản. Hãy thử chụp lại với ánh
+                      sáng tốt hơn.
                     </Text>
                   </View>
                 )}
@@ -195,7 +208,7 @@ export default function OCRResultScreen({ navigation, route }: Props) {
         {/* Action buttons */}
         <View style={styles.actions}>
           <TouchableOpacity style={styles.discardBtn} onPress={handleDiscard}>
-            <Text style={styles.discardText}>Bỏ qua</Text>
+            <Text style={styles.discardText}>Hủy</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -322,7 +335,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  metaTitle: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 10 },
+  metaTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#374151',
+    marginBottom: 10,
+  },
   metaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -331,7 +349,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f1f5f9',
   },
   metaLabel: { fontSize: 13, color: '#6b7280' },
-  metaValue: { fontSize: 13, color: '#111827', fontWeight: '500', flexShrink: 1, textAlign: 'right', marginLeft: 8 },
+  metaValue: {
+    fontSize: 13,
+    color: '#111827',
+    fontWeight: '500',
+    flexShrink: 1,
+    textAlign: 'right',
+    marginLeft: 8,
+  },
 
   actions: {
     flexDirection: 'row',
