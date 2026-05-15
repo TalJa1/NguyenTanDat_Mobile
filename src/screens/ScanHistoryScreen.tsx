@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, { useState, useCallback } from 'react';
 import {
   StyleSheet,
@@ -343,7 +345,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: '92%',
+    height: '92%',
+    flex: 0,
   },
   modalHeader: {
     flexDirection: 'row',
