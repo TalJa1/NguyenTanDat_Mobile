@@ -1,0 +1,337 @@
+diff --git a/node_modules/react-native-text-recognition/android/build.gradle b/node_modules/react-native-text-recognition/android/build.gradle
+index b76e895..7c4724b 100644
+--- a/node_modules/react-native-text-recognition/android/build.gradle
++++ b/node_modules/react-native-text-recognition/android/build.gradle
+@@ -2,7 +2,7 @@ buildscript {
+     if (project == rootProject) {
+         repositories {
+             google()
+-            jcenter()
++            mavenCentral()
+         }
+ 
+         dependencies {
+@@ -18,11 +18,10 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ android {
+-    compileSdkVersion safeExtGet('TextRecognition_compileSdkVersion', 29)
+-    buildToolsVersion safeExtGet('TextRecognition_buildToolsVersion', '29.0.2')
++    compileSdkVersion safeExtGet('compileSdkVersion', 36)
+     defaultConfig {
+-        minSdkVersion safeExtGet('TextRecognition_minSdkVersion', 16)
+-        targetSdkVersion safeExtGet('TextRecognition_targetSdkVersion', 29)
++        minSdkVersion safeExtGet('minSdkVersion', 24)
++        targetSdkVersion safeExtGet('targetSdkVersion', 36)
+         versionCode 1
+         versionName "1.0"
+ 
+@@ -49,7 +48,6 @@ repositories {
+         url("$rootDir/../node_modules/react-native/android")
+     }
+     google()
+-    jcenter()
+     mavenCentral()
+ }
+ 
+diff --git a/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/results.bin b/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/transformed/classes/classes_dex/classes.dex b/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..5d3f795
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/.transforms/674177abca9c1e6f36bdbb884be61717/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/results.bin b/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..0dae496
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/.transforms/a3fba63d21d1cf81a3dd0c08fe6d6c48/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/react-native-text-recognition/android/build/generated/source/buildConfig/debug/com/reactnativetextrecognition/BuildConfig.java b/node_modules/react-native-text-recognition/android/build/generated/source/buildConfig/debug/com/reactnativetextrecognition/BuildConfig.java
+new file mode 100644
+index 0000000..a8d7a4b
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/generated/source/buildConfig/debug/com/reactnativetextrecognition/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.reactnativetextrecognition;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.reactnativetextrecognition";
++  public static final String BUILD_TYPE = "debug";
++}
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..9a480fb
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativetextrecognition" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <meta-data
++        android:name="com.google.mlkit.vision.DEPENDENCIES"
++        android:value="ocr" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..04b5fb6
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.reactnativetextrecognition",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/react-native-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/react-native-text-recognition/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..1963d95
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/react-native-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..6e46715
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/react-native-text-recognition/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..6780143
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Fri May 15 11:26:09 ICT 2026
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..23fbcb2
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\build\generated\res\resValues\debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..114c9ff
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\debug\assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\build\intermediates\shader_assets\debug\compileDebugShaders\out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..b4c7369
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\debug\jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+new file mode 100644
+index 0000000..809b1ad
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\debug\shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/BuildConfig.class b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/BuildConfig.class
+new file mode 100644
+index 0000000..6fa3987
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/BuildConfig.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$1.class b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$1.class
+new file mode 100644
+index 0000000..12fa60e
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$1.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$2.class b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$2.class
+new file mode 100644
+index 0000000..fbaf35e
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule$2.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule.class b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule.class
+new file mode 100644
+index 0000000..370d1ed
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionModule.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionPackage.class b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionPackage.class
+new file mode 100644
+index 0000000..a9b6eba
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativetextrecognition/TextRecognitionPackage.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/react-native-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..dfd0dfe
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,14 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.reactnativetextrecognition" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7    <meta-data
++7-->C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:3-88
++8        android:name="com.google.mlkit.vision.DEPENDENCIES"
++8-->C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:14-65
++9        android:value="ocr" />
++9-->C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:66-85
++10
++11</manifest>
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..9a480fb
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.reactnativetextrecognition" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <meta-data
++        android:name="com.google.mlkit.vision.DEPENDENCIES"
++        android:value="ocr" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/BuildConfig.class b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/BuildConfig.class
+new file mode 100644
+index 0000000..6fa3987
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/BuildConfig.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$1.class b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$1.class
+new file mode 100644
+index 0000000..12fa60e
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$1.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$2.class b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$2.class
+new file mode 100644
+index 0000000..fbaf35e
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule$2.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule.class b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule.class
+new file mode 100644
+index 0000000..370d1ed
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionModule.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionPackage.class b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionPackage.class
+new file mode 100644
+index 0000000..a9b6eba
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/reactnativetextrecognition/TextRecognitionPackage.class differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar
+new file mode 100644
+index 0000000..7d5e7b2
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar differ
+diff --git a/node_modules/react-native-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/react-native-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..a9010b5
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.reactnativetextrecognition
+diff --git a/node_modules/react-native-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..3c69254
+--- /dev/null
++++ b/node_modules/react-native-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,23 @@
++-- Merging decision tree log ---
++manifest
++ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:1:1-3:12
++INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:1:1-3:12
++	package
++		ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:1:70-110
++		INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml
++	xmlns:android
++		ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:1:11-69
++meta-data#com.google.mlkit.vision.DEPENDENCIES
++ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:3-88
++	android:value
++		ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:66-85
++	android:name
++		ADDED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml:2:14-65
++uses-sdk
++INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml
++INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from C:\ZTalJaZ\AS\Projects\NguyenTanDat_QTN\NguyenTanDat_Mobile\node_modules\react-native-text-recognition\android\src\main\AndroidManifest.xml
+diff --git a/node_modules/react-native-text-recognition/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-text-recognition/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..530f999
+Binary files /dev/null and b/node_modules/react-native-text-recognition/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
