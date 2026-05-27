@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -21,6 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppHeader from '../components/AppHeader';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {getStorageValue} from '../storage/storage';
 
 type Message = {
   id: string;
@@ -30,16 +31,23 @@ type Message = {
   type?: 'text' | 'image';
 };
 
-const initialMessages: Message[] = [
-  {
-    id: 'welcome',
-    sender: 'bot',
-    text: 'Xin chào! Tôi là trợ lý quan trắc nước. Nhập câu hỏi hoặc gửi ảnh để tôi hỗ trợ bạn.',
-  },
-];
-
 function AssistantScreen() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const loadUserName = async () => {
+      const userName = (await getStorageValue('@user_name')) || 'bạn';
+      console.log('AssistantScreen: Loaded userName from storage:', userName);
+      setMessages([
+        {
+          id: 'welcome',
+          sender: 'bot',
+          text: `Xin chào ${userName} ! Tôi là trợ lý quan trắc nước. Nhập câu hỏi hoặc gửi ảnh để tôi hỗ trợ bạn.`,
+        },
+      ]);
+    };
+    loadUserName();
+  }, []);
   const [inputText, setInputText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedImageUri, setAttachedImageUri] = useState<string | null>(null);
