@@ -24,6 +24,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import {getStorageValue} from '../storage/storage';
 import axios from 'axios';
 import { SERVER_URL } from '@env';
+import RNFS from 'react-native-fs';
 
 type Message = {
   id: string;
@@ -102,13 +103,18 @@ function AssistantScreen() {
     setIsBotTyping(true);
 
     try {
-      // Build request body — image is sent as base64 if present
+      // Convert image to base64 if present
+      let imageBase64: string | undefined;
+      if (currentImage) {
+        const cleanPath = currentImage.replace('file://', '');
+        imageBase64 = await RNFS.readFile(cleanPath, 'base64');
+      }
+
       const body: { message: string; image_url?: string } = {
         message: trimmed || '',
       };
-
-      if (currentImage) {
-        body.image_url = currentImage;
+      if (imageBase64) {
+        body.image_url = `data:image/jpeg;base64,${imageBase64}`;
       }
 
       const { data } = await axios.post<{ reply: string }>(
