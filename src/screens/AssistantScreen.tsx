@@ -22,6 +22,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AppHeader from '../components/AppHeader';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import {getStorageValue} from '../storage/storage';
+import axios from 'axios';
+import { SERVER_URL } from '@env';
 
 type Message = {
   id: string;
@@ -51,6 +53,7 @@ function AssistantScreen() {
   const [inputText, setInputText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedImageUri, setAttachedImageUri] = useState<string | null>(null);
+  const [isBotTyping, setIsBotTyping] = useState(false);
   const animationValue = React.useRef(new Animated.Value(0)).current;
 
   const openMediaOptions = () => {
@@ -79,7 +82,7 @@ function AssistantScreen() {
     setMessages((prev) => [...prev, message]);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmed = inputText.trim();
     if (!trimmed && !attachedImageUri) {
       return;
@@ -93,23 +96,46 @@ function AssistantScreen() {
       type: attachedImageUri ? 'image' : 'text',
     });
 
+    const currentImage = attachedImageUri;
     setInputText('');
     setAttachedImageUri(null);
+    setIsBotTyping(true);
 
-    const replyText = attachedImageUri && trimmed
-      ? `Đã nhận ảnh và câu hỏi của bạn: "${trimmed}". Tôi đang phân tích và sẽ trả kết quả ngay.`
-      : attachedImageUri
-      ? 'Đã nhận ảnh của bạn. Tôi đang phân tích và sẽ trả kết quả ngay.'
-      : `Tôi đã nhận được câu hỏi của bạn: "${trimmed}". Đây là kết quả phân tích sơ bộ của tôi.`;
+    try {
+      // Build request body — image is sent as base64 if present
+      const body: { message: string; image_url?: string } = {
+        message: trimmed || '',
+      };
 
-    setTimeout(() => {
+      if (currentImage) {
+        body.image_url = currentImage;
+      }
+
+      const { data } = await axios.post<{ reply: string }>(
+        SERVER_URL,
+        body,
+        { headers: { 'Content-Type': 'application/json' } },
+      );
+
+      const replyText = data.reply ?? 'Tôi không hiểu yêu cầu của bạn.';
+
       addMessage({
         id: `bot-${Date.now()}`,
         sender: 'bot',
         text: replyText,
         type: 'text',
       });
-    }, 400);
+    } catch (error) {
+      console.log('Error communicating with server:', error);
+      addMessage({
+        id: `bot-err-${Date.now()}`,
+        sender: 'bot',
+        text: 'Xin lỗi, không thể kết nối đến máy chủ. Vui lòng thử lại sau.',
+        type: 'text',
+      });
+    } finally {
+      setIsBotTyping(false);
+    }
   };
 
   const requestAndroidPermission = async (type: 'gallery' | 'camera'): Promise<boolean> => {
@@ -224,6 +250,11 @@ function AssistantScreen() {
             </View>
           )}
         />
+        {isBotTyping && (
+          <View style={styles.botBubble}>
+            <Text style={styles.messageText}>Đang trả lời...</Text>
+          </View>
+        )}
       </ImageBackground>
 
       <View style={styles.inputBar}>

@@ -2,6 +2,11 @@
 #
 .DS_Store
 
+# Environment variables — never commit these
+.env
+.env.*
+!.env.example
+
 # Xcode
 #
 build/
