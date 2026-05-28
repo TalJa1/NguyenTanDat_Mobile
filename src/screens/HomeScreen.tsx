@@ -68,7 +68,7 @@ function HomeScreen() {
         <TextInput
           value={searchText}
           onChangeText={setSearchText}
-          placeholder="Nhập từ khóa, ví dụ: pH, khoáng chất, độ đục"
+          placeholder="Nhập từ khóa tìm kiếm..."
           placeholderTextColor="#9ca3af"
           style={styles.searchInput}
         />
