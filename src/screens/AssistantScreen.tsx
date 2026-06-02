@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -34,6 +34,64 @@ type Message = {
   type?: 'text' | 'image';
 };
 
+function TypingIndicator() {
+  const dots = [useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current, useRef(new Animated.Value(0)).current];
+
+  useEffect(() => {
+    const animations = dots.map((dot, i) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(i * 150),
+          Animated.timing(dot, { toValue: 1, duration: 300, useNativeDriver: true }),
+          Animated.timing(dot, { toValue: 0, duration: 300, useNativeDriver: true }),
+          Animated.delay((dots.length - i - 1) * 150),
+        ]),
+      ),
+    );
+    animations.forEach(a => a.start());
+    return () => animations.forEach(a => a.stop());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <View style={typingStyles.bubble}>
+      {dots.map((dot, i) => (
+        <Animated.View
+          key={i}
+          style={[typingStyles.dot, { opacity: dot, transform: [{ translateY: dot.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }) }] }]}
+        />
+      ))}
+    </View>
+  );
+}
+
+const typingStyles = StyleSheet.create({
+  bubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    alignSelf: 'flex-start',
+    borderRadius: 22,
+    borderBottomLeftRadius: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginHorizontal: 20,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#6b7280',
+    marginHorizontal: 3,
+  },
+});
+
 function AssistantScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -55,6 +113,7 @@ function AssistantScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [attachedImageUri, setAttachedImageUri] = useState<string | null>(null);
   const [isBotTyping, setIsBotTyping] = useState(false);
+  const flatListRef = useRef<FlatList<Message>>(null);
   const animationValue = React.useRef(new Animated.Value(0)).current;
 
   const openMediaOptions = () => {
@@ -221,12 +280,15 @@ function AssistantScreen() {
       >
         <View style={styles.backgroundOverlay} />
         <FlatList
+          ref={flatListRef}
           data={messages}
           keyExtractor={(item) => item.id}
           style={styles.flatList}
           contentContainerStyle={styles.chatContainer}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          ListFooterComponent={isBotTyping ? <TypingIndicator /> : null}
           renderItem={({ item }) => (
             <View
               style={[
@@ -256,11 +318,6 @@ function AssistantScreen() {
             </View>
           )}
         />
-        {isBotTyping && (
-          <View style={styles.botBubble}>
-            <Text style={styles.messageText}>Đang trả lời...</Text>
-          </View>
-        )}
       </ImageBackground>
 
       <View style={styles.inputBar}>
