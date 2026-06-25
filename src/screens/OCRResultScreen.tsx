@@ -51,18 +51,24 @@ export default function OCRResultScreen({ navigation, route }: Props) {
     try {
       const filePath = imageUri.startsWith('file://') ? imageUri.slice(7) : imageUri;
       const imageBase64 = await RNFS.readFile(filePath, 'base64');
+      console.log('[OCR] Image base64 length:', imageBase64.length, 'chars (~', Math.round(imageBase64.length / 1024), 'KB)');
+      console.log('[OCR] Sending to:', `${SERVER_URL}/ocr`);
       const { data } = await axios.post<{ text: string }>(
         `${SERVER_URL}/ocr`,
         { image_base64: imageBase64 },
-        { headers: { 'Content-Type': 'application/json' }, timeout: 30000 },
+        { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
       );
+      console.log('[OCR] Response:', data);
       const text = (data.text ?? '').trim();
       setEditedText(text);
       setCharCount(text.length);
     } catch (err) {
+      if (axios.isAxiosError(err)) {
+        console.log('[OCR ERROR]', err.code, err.message, err.response?.status, JSON.stringify(err.response?.data));
+      } else {
+        console.log('[OCR ERROR]', err instanceof Error ? err.message : String(err));
+      }
       const msg = err instanceof Error ? err.message : String(err);
-      console.log('[OCR ERROR]', msg);
-      console.log('[OCR URI]', imageUri);
       Alert.alert('Lỗi OCR', `Chi tiết lỗi:\n${msg}`);
       setEditedText('');
     } finally {
