@@ -15,7 +15,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import TextRecognition from '@react-native-ml-kit/text-recognition';
+import axios from 'axios';
+import RNFS from 'react-native-fs';
+import { SERVER_URL } from '@env';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { ScanStackParamList } from '../navigation/ScanStack';
@@ -47,18 +49,21 @@ export default function OCRResultScreen({ navigation, route }: Props) {
 
   const runOCR = async () => {
     try {
-      const result = await TextRecognition.recognize(imageUri);
-      const text = result.blocks
-        .map(b => b.text)
-        .join('\n')
-        .trim();
+      const filePath = imageUri.startsWith('file://') ? imageUri.slice(7) : imageUri;
+      const imageBase64 = await RNFS.readFile(filePath, 'base64');
+      const { data } = await axios.post<{ text: string }>(
+        `${SERVER_URL}/ocr`,
+        { image_base64: imageBase64 },
+        { headers: { 'Content-Type': 'application/json' }, timeout: 30000 },
+      );
+      const text = (data.text ?? '').trim();
       setEditedText(text);
       setCharCount(text.length);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.log('[OCR ERROR]', msg);
       console.log('[OCR URI]', imageUri);
-      Alert.alert('Lỗi OCR', `Chi tiết lỗi:\n${msg}\n\nURI: ${imageUri}`);
+      Alert.alert('Lỗi OCR', `Chi tiết lỗi:\n${msg}`);
       setEditedText('');
     } finally {
       setRecognizing(false);

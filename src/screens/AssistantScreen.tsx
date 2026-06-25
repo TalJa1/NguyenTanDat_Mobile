@@ -176,11 +176,13 @@ function AssistantScreen() {
         body.image_url = `data:image/jpeg;base64,${imageBase64}`;
       }
 
+      console.log('AssistantScreen: Sending request to', `${SERVER_URL}/chat`);
       const { data } = await axios.post<{ reply: string }>(
-        SERVER_URL,
+        `${SERVER_URL}/chat`,
         body,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
       );
+      console.log('AssistantScreen: Received response', data);
 
       const replyText = data.reply ?? 'Tôi không hiểu yêu cầu của bạn.';
 
@@ -191,7 +193,11 @@ function AssistantScreen() {
         type: 'text',
       });
     } catch (error) {
-      console.log('Error communicating with server:', error);
+      if (axios.isAxiosError(error)) {
+        console.log('AssistantScreen: Request failed -', error.code, error.message, error.response?.status, error.response?.data);
+      } else {
+        console.log('AssistantScreen: Error:', error);
+      }
       addMessage({
         id: `bot-err-${Date.now()}`,
         sender: 'bot',
