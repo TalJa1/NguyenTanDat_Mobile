@@ -13,9 +13,12 @@ import {
   ScrollView,
   ActivityIndicator,
   TextInput,
+  Linking,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons';
 import AppHeader from '../components/AppHeader';
 import { useFocusEffect } from '@react-navigation/native';
 import { SCAN_HISTORY_KEY } from './OCRResultScreen';
@@ -225,6 +228,42 @@ export default function ScanHistoryScreen() {
                       📅 {formatDate(selected.takenAt)}  🕒 {formatTime(selected.takenAt)}
                     </Text>
                   </View>
+                  
+                  <Text style={styles.modalSectionTitle}>Vị trí chụp ảnh</Text>
+                  <TouchableOpacity
+                    style={styles.mockMapContainer}
+                    activeOpacity={0.7}
+                    onPress={() => {
+                      const lat = 10.7769;
+                      const lng = 106.7009;
+                      const url = Platform.select({
+                        ios: `maps:0,0?q=${lat},${lng}`,
+                        android: `geo:0,0?q=${lat},${lng}(Vị trí chụp ảnh)`,
+                      });
+                      if (url) {
+                        Linking.openURL(url);
+                      }
+                    }}
+                  >
+                    <View style={styles.mockMapBg}>
+                      <Image 
+                        source={{ uri: 'https://static-maps.yandex.ru/1.x/?lang=en_US&ll=106.7009,10.7769&size=400,200&z=15&l=map&pt=106.7009,10.7769,pm2rdm' }} 
+                        style={StyleSheet.absoluteFill} 
+                        resizeMode="cover" 
+                      />
+                    </View>
+                    
+                    <View style={styles.mapAddressBar}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View>
+                          <Text style={styles.mapAddressText}>Khu vực lấy mẫu tự động (Mô phỏng)</Text>
+                          <Text style={styles.mapAddressCoords}>10.7769° N, 106.7009° E</Text>
+                        </View>
+                        <Icon name="open-outline" size={20} color="#6b7280" />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+
                   <Text style={styles.modalSectionTitle}>Văn bản (có thể chỉnh sửa)</Text>
                   <TextInput
                     style={styles.modalTextInput}
@@ -373,6 +412,87 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   modalMetaText: { fontSize: 13, color: '#374151', fontWeight: '500' },
+  mockMapContainer: {
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  mockMapBg: {
+    height: 140,
+    backgroundColor: '#f1f5f9',
+    position: 'relative',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mapPark: {
+    position: 'absolute',
+    top: -20,
+    right: -20,
+    width: 120,
+    height: 100,
+    backgroundColor: '#dcfce7',
+    borderRadius: 40,
+  },
+  mapWater: {
+    position: 'absolute',
+    bottom: -30,
+    left: -10,
+    width: 200,
+    height: 80,
+    backgroundColor: '#dbeafe',
+    transform: [{ rotate: '-15deg' }],
+  },
+  mapRoad1: {
+    position: 'absolute',
+    top: 0,
+    left: '40%',
+    width: 16,
+    height: '150%',
+    backgroundColor: '#ffffff',
+    transform: [{ rotate: '20deg' }],
+  },
+  mapRoad2: {
+    position: 'absolute',
+    top: '30%',
+    left: -50,
+    width: '150%',
+    height: 18,
+    backgroundColor: '#ffffff',
+    transform: [{ rotate: '-10deg' }],
+  },
+  mapPinContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  mapPinIcon: {
+    fontSize: 28,
+    marginTop: -14,
+  },
+  mapAddressBar: {
+    padding: 12,
+    backgroundColor: '#f8fafc',
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+  },
+  mapAddressText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  mapAddressCoords: {
+    fontSize: 11,
+    color: '#6b7280',
+    marginTop: 4,
+  },
   modalSectionTitle: {
     fontSize: 14,
     fontWeight: '700',
