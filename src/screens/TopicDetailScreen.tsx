@@ -110,7 +110,7 @@ function TopicDetailScreen({ route }: { route: TopicDetailRouteProp }) {
             </Text>
             <TextInput
               value={note}
-              onChangeText={setNote}
+              onChangeText={setNote}  
               placeholder="Nhập ghi chú của bạn..."
               placeholderTextColor="#9ca3af"
               multiline

@@ -43,7 +43,9 @@ function formatTime(iso: string): string {
 }
 
 function textPreview(text: string, maxLen = 90): string {
-  if (!text.trim()) { return '(Không có văn bản)'; }
+  if (!text.trim()) {
+    return '(Không có văn bản)';
+  }
   return text.length > maxLen ? `${text.slice(0, maxLen).trimEnd()}…` : text;
 }
 
@@ -54,10 +56,13 @@ export default function ScanHistoryScreen() {
   const [editText, setEditText] = useState('');
   const [saving, setSaving] = useState(false);
 
+  //! state lưu tọa độ, chưa có set
+  const [scanLocation] = useState('10.7769° N, 106.7009° E');
+
   useFocusEffect(
     useCallback(() => {
       loadHistory();
-    }, [])
+    }, []),
   );
 
   const loadHistory = async () => {
@@ -89,7 +94,9 @@ export default function ScanHistoryScreen() {
   };
 
   const handleClearAll = () => {
-    if (records.length === 0) { return; }
+    if (records.length === 0) {
+      return;
+    }
     Alert.alert('Xoá tất cả?', 'Toàn bộ lịch sử scan sẽ bị xoá.', [
       { text: 'Hủy', style: 'cancel' },
       {
@@ -109,11 +116,13 @@ export default function ScanHistoryScreen() {
   };
 
   const handleUpdateText = async () => {
-    if (!selected) { return; }
+    if (!selected) {
+      return;
+    }
     setSaving(true);
     try {
       const updated = records.map(r =>
-        r.id === selected.id ? { ...r, text: editText } : r
+        r.id === selected.id ? { ...r, text: editText } : r,
       );
       setRecords(updated);
       await AsyncStorage.setItem(SCAN_HISTORY_KEY, JSON.stringify(updated));
@@ -131,25 +140,36 @@ export default function ScanHistoryScreen() {
       onPress={() => openDetail(item)}
       activeOpacity={0.8}
     >
-      <Image
-        source={{ uri: item.imageUri }}
-        style={styles.thumbnail}
-        resizeMode="cover"
-      />
-      <View style={styles.cardContent}>
-        <View style={styles.cardDateRow}>
-          <Text style={styles.cardDate}>📅 {formatDate(item.takenAt)}</Text>
-          <Text style={styles.cardTime}>🕒 {formatTime(item.takenAt)}</Text>
+      <View style={styles.cardImageContainer}>
+        <Image
+          source={{ uri: item.imageUri }}
+          style={styles.thumbnail}
+          resizeMode="cover"
+        />
+        <View style={styles.dateBadge}>
+          <Text style={styles.dateBadgeText}>{formatDate(item.takenAt)}</Text>
         </View>
-        <Text style={styles.cardText}>{textPreview(item.text)}</Text>
+      </View>
+      <View style={styles.cardContent}>
+        <View style={styles.cardHeaderRow}>
+          <Text style={styles.cardLocation} numberOfLines={1}>
+            📍 {scanLocation}
+          </Text>
+          <Text style={styles.cardTime}>{formatTime(item.takenAt)}</Text>
+        </View>
+        <Text style={styles.cardText} numberOfLines={2}>
+          {textPreview(item.text, 60)}
+        </Text>
         <View style={styles.cardFooter}>
-          <Text style={styles.cardChars}>{item.text.length} ký tự</Text>
+          <Text style={styles.cardChars}>
+            <Text style={{ fontWeight: '600', color: '#2563eb' }}>{item.text.length}</Text> ký tự
+          </Text>
           <TouchableOpacity
             style={styles.deleteBtn}
             onPress={() => handleDelete(item.id)}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={styles.deleteBtnText}>🗑️ Xoá</Text>
+            <Text style={styles.deleteBtnText}>Xoá</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -160,10 +180,17 @@ export default function ScanHistoryScreen() {
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <AppHeader
         title="Lịch sử Scan"
-        subtitle={records.length > 0 ? `${records.length} kết quả đã lưu` : 'Chưa có bản ghi nào'}
+        subtitle={
+          records.length > 0
+            ? `${records.length} kết quả đã lưu`
+            : 'Chưa có bản ghi nào'
+        }
         right={
           records.length > 0 ? (
-            <TouchableOpacity style={styles.clearAllBtn} onPress={handleClearAll}>
+            <TouchableOpacity
+              style={styles.clearAllBtn}
+              onPress={handleClearAll}
+            >
               <Text style={styles.clearAllText}>Xoá tất cả</Text>
             </TouchableOpacity>
           ) : undefined
@@ -225,10 +252,11 @@ export default function ScanHistoryScreen() {
                   />
                   <View style={styles.modalMeta}>
                     <Text style={styles.modalMetaText}>
-                      📅 {formatDate(selected.takenAt)}  🕒 {formatTime(selected.takenAt)}
+                      📅 {formatDate(selected.takenAt)} 🕒{' '}
+                      {formatTime(selected.takenAt)}
                     </Text>
                   </View>
-                  
+
                   <Text style={styles.modalSectionTitle}>Vị trí chụp ảnh</Text>
                   <TouchableOpacity
                     style={styles.mockMapContainer}
@@ -246,25 +274,39 @@ export default function ScanHistoryScreen() {
                     }}
                   >
                     <View style={styles.mockMapBg}>
-                      <Image 
-                        source={{ uri: 'https://static-maps.yandex.ru/1.x/?lang=en_US&ll=106.7009,10.7769&size=400,200&z=15&l=map&pt=106.7009,10.7769,pm2rdm' }} 
-                        style={StyleSheet.absoluteFill} 
-                        resizeMode="cover" 
+                      <Image
+                        source={{
+                          uri: 'https://static-maps.yandex.ru/1.x/?lang=en_US&ll=106.7009,10.7769&size=400,200&z=15&l=map&pt=106.7009,10.7769,pm2rdm',
+                        }}
+                        style={StyleSheet.absoluteFill}
+                        resizeMode="cover"
                       />
                     </View>
-                    
+
                     <View style={styles.mapAddressBar}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
                         <View>
-                          <Text style={styles.mapAddressText}>Khu vực lấy mẫu tự động (Mô phỏng)</Text>
-                          <Text style={styles.mapAddressCoords}>10.7769° N, 106.7009° E</Text>
+                          <Text style={styles.mapAddressText}>
+                            Mở trong Google Maps
+                          </Text>
+                          <Text style={styles.mapAddressCoords}>
+                            {scanLocation}
+                          </Text>
                         </View>
                         <Icon name="open-outline" size={20} color="#6b7280" />
                       </View>
                     </View>
                   </TouchableOpacity>
 
-                  <Text style={styles.modalSectionTitle}>Văn bản (có thể chỉnh sửa)</Text>
+                  <Text style={styles.modalSectionTitle}>
+                    Văn bản (có thể chỉnh sửa)
+                  </Text>
                   <TextInput
                     style={styles.modalTextInput}
                     value={editText}
@@ -274,7 +316,9 @@ export default function ScanHistoryScreen() {
                     placeholder="Không có văn bản..."
                     placeholderTextColor="#9ca3af"
                   />
-                  <Text style={styles.modalCharCount}>{editText.length} ký tự</Text>
+                  <Text style={styles.modalCharCount}>
+                    {editText.length} ký tự
+                  </Text>
                 </>
               )}
             </ScrollView>
@@ -291,9 +335,11 @@ export default function ScanHistoryScreen() {
                 onPress={handleUpdateText}
                 disabled={saving}
               >
-                {saving
-                  ? <ActivityIndicator color="#fff" />
-                  : <Text style={styles.modalSaveText}>💾 Lưu chỉnh sửa</Text>}
+                {saving ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.modalSaveText}>💾 Lưu chỉnh sửa</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -335,45 +381,64 @@ const styles = StyleSheet.create({
   listContent: { padding: 16, paddingBottom: 32 },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 16,
+    borderRadius: 20,
     flexDirection: 'row',
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
+    shadowColor: '#2563eb',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
   },
-  thumbnail: { width: 90, height: 110, backgroundColor: '#e2e8f0' },
-  cardContent: { flex: 1, padding: 12 },
-  cardDateRow: {
+  cardImageContainer: {
+    position: 'relative',
+  },
+  thumbnail: { width: 100, height: '100%', backgroundColor: '#e2e8f0' },
+  dateBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  dateBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#1d4ed8',
+  },
+  cardContent: { flex: 1, padding: 14, justifyContent: 'space-between' },
+  cardHeaderRow: {
     flexDirection: 'row',
-    gap: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 6,
-    flexWrap: 'wrap',
   },
-  cardDate: { fontSize: 12, color: '#374151', fontWeight: '600' },
-  cardTime: { fontSize: 12, color: '#6b7280' },
+  cardLocation: { fontSize: 13, color: '#1e293b', fontWeight: '700', flex: 1, marginRight: 8 },
+  cardTime: { fontSize: 11, color: '#64748b', fontWeight: '500' },
   cardText: {
     fontSize: 13,
-    color: '#374151',
+    color: '#475569',
     lineHeight: 20,
-    flex: 1,
-    marginBottom: 6,
+    marginBottom: 10,
   },
   cardFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 'auto',
   },
-  cardChars: { fontSize: 11, color: '#9ca3af' },
+  cardChars: { fontSize: 12, color: '#64748b' },
   deleteBtn: {
-    backgroundColor: '#fef2f2',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: '#fee2e2',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
-  deleteBtnText: { fontSize: 12, color: '#ef4444', fontWeight: '600' },
+  deleteBtnText: { fontSize: 12, color: '#ef4444', fontWeight: '700' },
 
   modalOverlay: {
     flex: 1,

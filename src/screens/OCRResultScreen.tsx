@@ -43,15 +43,26 @@ export default function OCRResultScreen({ navigation, route }: Props) {
   const [saving, setSaving] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
+  //! state lưu tọa độ, chưa có state
+  const [scanLocation] = useState('10.7769° N, 106.7009° E');
+
   useEffect(() => {
     runOCR();
   }, []);
 
   const runOCR = async () => {
     try {
-      const filePath = imageUri.startsWith('file://') ? imageUri.slice(7) : imageUri;
+      const filePath = imageUri.startsWith('file://')
+        ? imageUri.slice(7)
+        : imageUri;
       const imageBase64 = await RNFS.readFile(filePath, 'base64');
-      console.log('[OCR] Image base64 length:', imageBase64.length, 'chars (~', Math.round(imageBase64.length / 1024), 'KB)');
+      console.log(
+        '[OCR] Image base64 length:',
+        imageBase64.length,
+        'chars (~',
+        Math.round(imageBase64.length / 1024),
+        'KB)',
+      );
       console.log('[OCR] Sending to:', `${SERVER_URL}/ocr`);
       const { data } = await axios.post<{ text: string }>(
         `${SERVER_URL}/ocr`,
@@ -64,9 +75,18 @@ export default function OCRResultScreen({ navigation, route }: Props) {
       setCharCount(text.length);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.log('[OCR ERROR]', err.code, err.message, err.response?.status, JSON.stringify(err.response?.data));
+        console.log(
+          '[OCR ERROR]',
+          err.code,
+          err.message,
+          err.response?.status,
+          JSON.stringify(err.response?.data),
+        );
       } else {
-        console.log('[OCR ERROR]', err instanceof Error ? err.message : String(err));
+        console.log(
+          '[OCR ERROR]',
+          err instanceof Error ? err.message : String(err),
+        );
       }
       const msg = err instanceof Error ? err.message : String(err);
       Alert.alert('Lỗi OCR', `Chi tiết lỗi:\n${msg}`);
@@ -203,6 +223,10 @@ export default function OCRResultScreen({ navigation, route }: Props) {
                 <Text style={styles.metaValue}>
                   {new Date().toLocaleString('vi-VN')}
                 </Text>
+              </View>
+              <View style={styles.metaRow}>
+                <Text style={styles.metaLabel}>Vị trí:</Text>
+                <Text style={styles.metaValue}>{scanLocation}</Text>
               </View>
               <View style={styles.metaRow}>
                 <Text style={styles.metaLabel}>Trạng thái:</Text>

@@ -1,0 +1,39 @@
+=== UI/UX Restyle & Performance Optimization Log ===
+Date: 2026-07-09
+
+1. PERFORMANCE OPTIMIZATIONS (Lag Fixes for Android):
+- Removed heavy `shadow` and `elevation` properties across the app which were causing stuttering during scrolling on Android.
+- Replaced shadows with clean, flat design subtle borders (`borderWidth: 1`, `borderColor: '#e2e8f0'`).
+- Fixed Nested Scroll Issue in `HomeScreen.tsx`: Moved the static Hero Header and Search Bar into `ListHeaderComponent` of `FlatList` instead of wrapping a non-scrollable `FlatList` inside a `ScrollView`. This restores FlatList's virtualization optimizations.
+- Optimized `FlatList` components across `HomeScreen`, `ScanHistoryScreen`, and `AssistantScreen` by adding `initialNumToRender`, `maxToRenderPerBatch`, `windowSize`, and `removeClippedSubviews={Platform.OS === 'android'}`.
+- Added `hardwareAccelerated={true}` to Modals (e.g., in `ScanHistoryScreen` and `AssistantScreen`) for smoother fade and slide animations.
+
+2. UI / UX ENHANCEMENTS:
+- `BottomTabs.tsx`: Upgraded from static emoji icons to professional vector icons (`Ionicons`). Flattened the tab bar styling by removing top shadows.
+- `AppHeader.tsx`: Added `hitSlop` and `activeOpacity` to header buttons to make them easier to tap and provide better visual feedback.
+- `AssistantScreen.tsx`: Modernized chat bubbles. Changed user bubble to solid blue (`#1d4ed8`) and bot bubble to white with a light border. Cleaned up the input bar.
+- Replaced `Pressable` with `TouchableOpacity` (or added `activeOpacity={0.7}`) on list items to give users a tactile response when tapping on cards.
+
+3. NEW FEATURES & DIVERSE STYLING:
+- `ScanHistoryScreen.tsx`: Added a Map UI snippet in the Scan Detail modal. The app now displays a mock static map image representing the location of the scan (using Yandex Static Maps to avoid Google API key requirements).
+- Added deep linking so that tapping on the mock map opens the native Google Maps or Apple Maps app with the corresponding coordinates.
+- Made Scan History List diverse: alternating left-border accent colors (blue/green), changed date/time indicators into colored badges, and added proper vector icons for better contextual visuals. In the detail modal, the date/time header was redesigned with a clean divider format.
+- `CameraScreen.tsx`: Redesigned to match the water-quality theme. Replaced emoji buttons with professional Ionicons. Changed the focus frame to a sleek blue and added a smooth, continuously animated "scanning line" that sweeps up and down. Updated the capture button and texts to better fit the app context.
+- `OCRResultScreen.tsx`: Removed heavy shadows. Replaced all emoji texts (📷, 📄, 🔍, 📋, 💾, ✓) with professional `Ionicons`. Converted cards to the modern flat design with borders.
+- `TopicDetailScreen.tsx`: Removed remaining shadows from detail cards and replaced them with flat design borders for consistency and scrolling performance.
+
+4. FILES MODIFIED:
+- src/components/AppHeader.tsx
+- src/navigation/BottomTabs.tsx
+- src/screens/HomeScreen.tsx
+- src/screens/AssistantScreen.tsx
+- src/screens/ScanHistoryScreen.tsx
+- src/screens/CameraScreen.tsx
+- src/screens/OCRResultScreen.tsx
+- src/screens/TopicDetailScreen.tsx
+- src/screens/GuideScreen.tsx
+- src/screens/GuideDetailScreen.tsx
+- src/screens/NameInputScreen.tsx
+- src/screens/WelcomeScreen.tsx
+
+Note: No backend APIs, routing logic, or configurations were altered as per instructions.
