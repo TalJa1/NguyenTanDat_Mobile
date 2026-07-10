@@ -12,11 +12,13 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import RNFS from 'react-native-fs';
+import Geolocation from '@react-native-community/geolocation';
 import { SERVER_URL } from '@env';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
@@ -29,6 +31,24 @@ export interface ScanRecord {
   imageUri: string;
   text: string;
   takenAt: string;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+async function requestLocationPermission(): Promise<boolean> {
+  if (Platform.OS !== 'android') {
+    return true;
+  }
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    {
+      title: 'Quyền truy cập vị trí',
+      message: 'Ứng dụng cần quyền vị trí để lưu vị trí chụp ảnh.',
+      buttonPositive: 'Đồng ý',
+      buttonNegative: 'Từ chối',
+    },
+  );
+  return granted === PermissionsAndroid.RESULTS.GRANTED;
 }
 
 type Props = {
@@ -42,10 +62,40 @@ export default function OCRResultScreen({ navigation, route }: Props) {
   const [editedText, setEditedText] = useState('');
   const [saving, setSaving] = useState(false);
   const [charCount, setCharCount] = useState(0);
+  const [locating, setLocating] = useState(true);
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
 
   useEffect(() => {
     runOCR();
+    fetchLocation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchLocation = async () => {
+    setLocating(true);
+    try {
+      const hasPermission = await requestLocationPermission();
+      if (!hasPermission) {
+        setLocating(false);
+        return;
+      }
+      Geolocation.getCurrentPosition(
+        pos => {
+          setLatitude(pos.coords.latitude.toFixed(6));
+          setLongitude(pos.coords.longitude.toFixed(6));
+          setLocating(false);
+        },
+        err => {
+          console.log('[LOCATION ERROR]', err.code, err.message);
+          setLocating(false);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      );
+    } catch {
+      setLocating(false);
+    }
+  };
 
   const runOCR = async () => {
     try {
@@ -86,11 +136,15 @@ export default function OCRResultScreen({ navigation, route }: Props) {
     try {
       const raw = await AsyncStorage.getItem(SCAN_HISTORY_KEY);
       const history: ScanRecord[] = raw ? JSON.parse(raw) : [];
+      const parsedLat = parseFloat(latitude);
+      const parsedLng = parseFloat(longitude);
       const record: ScanRecord = {
         id: Date.now().toString(),
         imageUri,
         text: editedText,
         takenAt: new Date().toISOString(),
+        latitude: Number.isFinite(parsedLat) ? parsedLat : null,
+        longitude: Number.isFinite(parsedLng) ? parsedLng : null,
       };
       history.unshift(record);
       await AsyncStorage.setItem(SCAN_HISTORY_KEY, JSON.stringify(history));
@@ -191,6 +245,49 @@ export default function OCRResultScreen({ navigation, route }: Props) {
                 />
                 <Text style={styles.charCount}>{charCount} ký tự</Text>
               </>
+            )}
+          </View>
+
+          {/* Location card */}
+          <View style={styles.resultCard}>
+            <View style={styles.resultCardHeader}>
+              <Text style={styles.resultCardTitle}>📍 Vị trí chụp</Text>
+              <TouchableOpacity onPress={fetchLocation} disabled={locating}>
+                <Text style={styles.editHint}>
+                  {locating ? 'Đang lấy vị trí...' : 'Lấy lại vị trí'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {locating ? (
+              <View style={styles.loadingOCR}>
+                <ActivityIndicator size="small" color="#1d4ed8" />
+                <Text style={styles.loadingSubText}>Đang xác định vị trí...</Text>
+              </View>
+            ) : (
+              <View style={styles.locationRow}>
+                <View style={styles.locationField}>
+                  <Text style={styles.locationLabel}>Vĩ độ (lat)</Text>
+                  <TextInput
+                    style={styles.locationInput}
+                    value={latitude}
+                    onChangeText={setLatitude}
+                    keyboardType="numbers-and-punctuation"
+                    placeholder="—"
+                    placeholderTextColor="#9ca3af"
+                  />
+                </View>
+                <View style={styles.locationField}>
+                  <Text style={styles.locationLabel}>Kinh độ (long)</Text>
+                  <TextInput
+                    style={styles.locationInput}
+                    value={longitude}
+                    onChangeText={setLongitude}
+                    keyboardType="numbers-and-punctuation"
+                    placeholder="—"
+                    placeholderTextColor="#9ca3af"
+                  />
+                </View>
+              </View>
             )}
           </View>
 
@@ -333,6 +430,27 @@ const styles = StyleSheet.create({
     color: '#9ca3af',
     textAlign: 'right',
     marginTop: 6,
+  },
+
+  locationRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  locationField: { flex: 1 },
+  locationLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginBottom: 6,
+    fontWeight: '500',
+  },
+  locationInput: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 14,
+    color: '#111827',
+    backgroundColor: '#f8fafc',
   },
 
   metaCard: {

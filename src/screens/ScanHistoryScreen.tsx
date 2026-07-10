@@ -16,10 +16,33 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WebView } from 'react-native-webview';
 import AppHeader from '../components/AppHeader';
 import { useFocusEffect } from '@react-navigation/native';
 import { SCAN_HISTORY_KEY } from './OCRResultScreen';
 import type { ScanRecord } from './OCRResultScreen';
+
+function buildMapHtml(latitude: number, longitude: number): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>html,body,#map{height:100%;margin:0;padding:0;}</style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([${latitude}, ${longitude}], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+    L.marker([${latitude}, ${longitude}]).addTo(map);
+  </script>
+</body>
+</html>`;
+}
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -50,6 +73,7 @@ export default function ScanHistoryScreen() {
   const [selected, setSelected] = useState<ScanRecord | null>(null);
   const [editText, setEditText] = useState('');
   const [saving, setSaving] = useState(false);
+  const [mapCoords, setMapCoords] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -139,6 +163,19 @@ export default function ScanHistoryScreen() {
           <Text style={styles.cardTime}>🕒 {formatTime(item.takenAt)}</Text>
         </View>
         <Text style={styles.cardText}>{textPreview(item.text)}</Text>
+        {item.latitude != null && item.longitude != null && (
+          <TouchableOpacity
+            style={styles.locationBadge}
+            onPress={() =>
+              setMapCoords({ latitude: item.latitude as number, longitude: item.longitude as number })
+            }
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          >
+            <Text style={styles.locationBadgeText}>
+              📍 {item.latitude.toFixed(5)}, {item.longitude.toFixed(5)}
+            </Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.cardFooter}>
           <Text style={styles.cardChars}>{item.text.length} ký tự</Text>
           <TouchableOpacity
@@ -225,6 +262,22 @@ export default function ScanHistoryScreen() {
                       📅 {formatDate(selected.takenAt)}  🕒 {formatTime(selected.takenAt)}
                     </Text>
                   </View>
+                  {selected.latitude != null && selected.longitude != null && (
+                    <TouchableOpacity
+                      style={styles.modalLocationRow}
+                      onPress={() =>
+                        setMapCoords({
+                          latitude: selected.latitude as number,
+                          longitude: selected.longitude as number,
+                        })
+                      }
+                    >
+                      <Text style={styles.modalLocationText}>
+                        📍 {selected.latitude.toFixed(6)}, {selected.longitude.toFixed(6)}
+                      </Text>
+                      <Text style={styles.modalLocationLink}>Xem bản đồ ›</Text>
+                    </TouchableOpacity>
+                  )}
                   <Text style={styles.modalSectionTitle}>Văn bản (có thể chỉnh sửa)</Text>
                   <TextInput
                     style={styles.modalTextInput}
@@ -257,6 +310,32 @@ export default function ScanHistoryScreen() {
                   : <Text style={styles.modalSaveText}>💾 Lưu chỉnh sửa</Text>}
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Map modal */}
+      <Modal
+        visible={mapCoords !== null}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setMapCoords(null)}
+      >
+        <View style={styles.mapModalOverlay}>
+          <View style={styles.mapModalSheet}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Vị trí trên bản đồ</Text>
+              <TouchableOpacity onPress={() => setMapCoords(null)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            {mapCoords && (
+              <WebView
+                style={styles.mapWebView}
+                originWhitelist={['*']}
+                source={{ html: buildMapHtml(mapCoords.latitude, mapCoords.longitude) }}
+              />
+            )}
           </View>
         </View>
       </Modal>
@@ -328,6 +407,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cardChars: { fontSize: 11, color: '#9ca3af' },
+  locationBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#eff6ff',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: 6,
+  },
+  locationBadgeText: { fontSize: 11, color: '#1d4ed8', fontWeight: '600' },
   deleteBtn: {
     backgroundColor: '#fef2f2',
     borderRadius: 8,
@@ -373,6 +461,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   modalMetaText: { fontSize: 13, color: '#374151', fontWeight: '500' },
+  modalLocationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#eff6ff',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 16,
+  },
+  modalLocationText: { fontSize: 13, color: '#1d4ed8', fontWeight: '500', flexShrink: 1 },
+  modalLocationLink: { fontSize: 13, color: '#1d4ed8', fontWeight: '700', marginLeft: 8 },
+  mapModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  mapModalSheet: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    height: '70%',
+    overflow: 'hidden',
+  },
+  mapWebView: { flex: 1 },
   modalSectionTitle: {
     fontSize: 14,
     fontWeight: '700',
