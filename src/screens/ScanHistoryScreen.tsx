@@ -152,11 +152,13 @@ export default function ScanHistoryScreen() {
       onPress={() => openDetail(item)}
       activeOpacity={0.8}
     >
-      <Image
-        source={{ uri: item.imageUri }}
-        style={styles.thumbnail}
-        resizeMode="cover"
-      />
+      <View style={styles.thumbnailContainer}>
+        <Image
+          source={{ uri: item.imageUri }}
+          style={styles.thumbnailImage}
+          resizeMode="cover"
+        />
+      </View>
       <View style={styles.cardContent}>
         <View style={styles.cardDateRow}>
           <Text style={styles.cardDate}>📅 {formatDate(item.takenAt)}</Text>
@@ -378,13 +380,15 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     flexDirection: 'row',
     overflow: 'hidden',
+    minHeight: 120,
     shadowColor: '#000',
     shadowOpacity: 0.06,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
-  thumbnail: { width: 90, height: 110, backgroundColor: '#e2e8f0' },
+  thumbnailContainer: { width: '28%', backgroundColor: '#e2e8f0' },
+  thumbnailImage: { position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 },
   cardContent: { flex: 1, padding: 12 },
   cardDateRow: {
     flexDirection: 'row',
@@ -398,7 +402,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#374151',
     lineHeight: 20,
-    flex: 1,
+    flexGrow: 1,
     marginBottom: 6,
   },
   cardFooter: {
