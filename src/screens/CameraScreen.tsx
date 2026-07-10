@@ -34,8 +34,16 @@ type Props = {
 type FlashMode = 'off' | 'on' | 'auto';
 
 const FLASH_CYCLE: FlashMode[] = ['off', 'on', 'auto'];
-const FLASH_ICONS: Record<FlashMode, string> = { off: '⚡', on: '🔆', auto: '✨' };
-const FLASH_LABELS: Record<FlashMode, string> = { off: 'Tắt', on: 'Bật', auto: 'Tự động' };
+const FLASH_ICONS: Record<FlashMode, string> = {
+  off: '⚡',
+  on: '🔆',
+  auto: '✨',
+};
+const FLASH_LABELS: Record<FlashMode, string> = {
+  off: 'Tắt',
+  on: 'Bật',
+  auto: 'Tự động',
+};
 
 export default function CameraScreen({ navigation }: Props) {
   const [position, setPosition] = useState<'back' | 'front'>('back');
@@ -64,7 +72,7 @@ export default function CameraScreen({ navigation }: Props) {
     .onStart(() => {
       startZoom.value = zoom.value;
     })
-    .onUpdate((e) => {
+    .onUpdate(e => {
       const next = startZoom.value * e.scale;
       zoom.value = Math.min(Math.max(next, minZoomSV.value), maxZoomSV.value);
     });
@@ -81,11 +89,14 @@ export default function CameraScreen({ navigation }: Props) {
   }, []);
 
   const handleCapture = useCallback(async () => {
-    if (!cameraRef.current || capturing) { return; }
+    if (!cameraRef.current || capturing) {
+      return;
+    }
     setCapturing(true);
     try {
       const photo = await cameraRef.current.takePhoto({ flash });
-      const uri = Platform.OS === 'android' ? `file://${photo.path}` : photo.path;
+      const uri =
+        Platform.OS === 'android' ? `file://${photo.path}` : photo.path;
       navigation.navigate('OCRResult', { imageUri: uri });
     } catch {
       Alert.alert('Lỗi', 'Không thể chụp ảnh. Vui lòng thử lại.');
@@ -95,7 +106,7 @@ export default function CameraScreen({ navigation }: Props) {
   }, [capturing, flash, navigation]);
 
   const handleGallery = useCallback(() => {
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (res) => {
+    launchImageLibrary({ mediaType: 'photo', quality: 1 }, res => {
       if (res.assets?.[0]?.uri) {
         navigation.navigate('OCRResult', { imageUri: res.assets[0].uri! });
       }
@@ -152,7 +163,10 @@ export default function CameraScreen({ navigation }: Props) {
 
       {/* Top controls */}
       <SafeAreaView edges={['top']} style={styles.topControls}>
-        <TouchableOpacity style={styles.roundBtn} onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.roundBtn}
+          onPress={() => navigation.goBack()}
+        >
           <Text style={styles.roundBtnText}>✕</Text>
         </TouchableOpacity>
 
@@ -193,14 +207,16 @@ export default function CameraScreen({ navigation }: Props) {
           disabled={capturing}
           activeOpacity={0.85}
         >
-          {capturing
-            ? <ActivityIndicator color="#1d4ed8" size="large" />
-            : <View style={styles.captureInner} />}
+          {capturing ? (
+            <ActivityIndicator color="#1d4ed8" size="large" />
+          ) : (
+            <View style={styles.captureInner} />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.sideBtn}
-          onPress={() => setPosition(p => p === 'back' ? 'front' : 'back')}
+          onPress={() => setPosition(p => (p === 'back' ? 'front' : 'back'))}
         >
           <View style={styles.sideBtnCircle}>
             <Text style={{ fontSize: 24 }}>🔄</Text>
@@ -380,7 +396,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.3)',
   },
-  sideBtnLabel: { color: 'rgba(255,255,255,0.75)', fontSize: 11, fontWeight: '500' },
+  sideBtnLabel: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 11,
+    fontWeight: '500',
+  },
   captureBtn: {
     width: 78,
     height: 78,

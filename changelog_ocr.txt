@@ -1,0 +1,90 @@
+DANH SÁCH CÁC CHỈNH SỬA (CHANGELOG)
+
+==================================================
+1. CHỈNH SỬA SỐ 1
+==================================================
+- Lý do chỉnh sửa: Xử lý lỗi "NETWORK error" khi tính năng OCR quét ảnh. Nguyên nhân do ứng dụng cố gửi ảnh lên máy chủ backend nhưng máy chủ không hoạt động hoặc không tồn tại, khiến kết nối thất bại. Cần thêm cơ chế fallback (dự phòng) để sử dụng thư viện Google ML-Kit quét ảnh offline trực tiếp trên thiết bị nếu gọi API thất bại.
+- Ngày giờ chỉnh sửa: 10/07/2026, khoảng 14:09.
+- File thay đổi: src/screens/OCRResultScreen.tsx
+
+* Đoạn code gốc:
+```javascript
+  const runOCR = async () => {
+    try {
+      const filePath = imageUri.startsWith('file://') ? imageUri.slice(7) : imageUri;
+      const imageBase64 = await RNFS.readFile(filePath, 'base64');
+      console.log('[OCR] Image base64 length:', imageBase64.length, 'chars (~', Math.round(imageBase64.length / 1024), 'KB)');
+      console.log('[OCR] Sending to:', `${SERVER_URL}/ocr`);
+      const { data } = await axios.post<{ text: string }>(
+        `${SERVER_URL}/ocr`,
+        { image_base64: imageBase64 },
+        { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
+      );
+      console.log('[OCR] Response:', data);
+      const text = (data.text ?? '').trim();
+      setEditedText(text);
+      setCharCount(text.length);
+    } catch (err) {
+//...
+```
+
+* Đoạn code sau sửa (bao gồm cả việc thêm import TextRecognition):
+```javascript
+  const runOCR = async () => {
+    try {
+      const filePath = imageUri.startsWith('file://') ? imageUri.slice(7) : imageUri;
+      const imageBase64 = await RNFS.readFile(filePath, 'base64');
+      console.log('[OCR] Image base64 length:', imageBase64.length, 'chars (~', Math.round(imageBase64.length / 1024), 'KB)');
+      console.log('[OCR] Sending to:', `${SERVER_URL}/ocr`);
+      
+      let text = '';
+      try {
+        const { data } = await axios.post<{ text: string }>(
+          `${SERVER_URL}/ocr`,
+          { image_base64: imageBase64 },
+          { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
+        );
+        console.log('[OCR] Response from server:', data);
+        text = (data.text ?? '').trim();
+      } catch (apiErr) {
+        console.log('[OCR] API failed, falling back to local ML Kit...', apiErr instanceof Error ? apiErr.message : String(apiErr));
+        const result = await TextRecognition.recognize(filePath);
+        text = (result.text ?? '').trim();
+      }
+
+      setEditedText(text);
+      setCharCount(text.length);
+    } catch (err) {
+//...
+```
+
+- Cách vận hành sau khi sửa: Khi người dùng chụp ảnh hoặc chọn ảnh, hàm `runOCR` sẽ chạy. Đầu tiên, nó vẫn cố gắng gửi HTTP request (axios) lên `SERVER_URL`. Nếu request này thất bại (timeout, sai IP, server tắt, v.v.), ứng dụng sẽ không văng lỗi "NETWORK error" ra màn hình nữa. Thay vào đó, nó nhảy vào khối `catch (apiErr)` và gọi `TextRecognition.recognize(filePath)` để dùng bộ vi xử lý của điện thoại phân tích chữ cái offline. Người dùng vẫn nhận được kết quả bình thường.
+
+
+==================================================
+2. CHỈNH SỬA SỐ 2
+==================================================
+- Lý do chỉnh sửa: Sửa lỗi "no content provider: ....jpg". Lỗi này xảy ra do ở Chỉnh sửa số 1, ta truyền biến `filePath` vào hàm ML-Kit. Biến `filePath` trước đó đã bị code cũ cắt bỏ mất tiền tố `file://` (hoặc `content://`). Các API Native của Android (được thư viện ML-Kit sử dụng ngầm) bắt buộc phải có tiền tố này (scheme) để hiểu cách đọc file ảnh. Vì bị cắt đi nên Android báo lỗi không tìm thấy Content Provider phù hợp.
+- Ngày giờ chỉnh sửa: 10/07/2026, khoảng 14:19.
+- File thay đổi: src/screens/OCRResultScreen.tsx
+
+* Đoạn code gốc:
+```javascript
+      } catch (apiErr) {
+        console.log('[OCR] API failed, falling back to local ML Kit...', apiErr instanceof Error ? apiErr.message : String(apiErr));
+        const result = await TextRecognition.recognize(filePath);
+        text = (result.text ?? '').trim();
+      }
+```
+
+* Đoạn code sau sửa:
+```javascript
+      } catch (apiErr) {
+        console.log('[OCR] API failed, falling back to local ML Kit...', apiErr instanceof Error ? apiErr.message : String(apiErr));
+        // Use the original imageUri (with file:// or content:// scheme) for ML Kit
+        const result = await TextRecognition.recognize(imageUri);
+        text = (result.text ?? '').trim();
+      }
+```
+
+- Cách vận hành sau khi sửa: Cơ chế fallback vẫn hoạt động như ở Chỉnh sửa 1, nhưng thay vì truyền `filePath` (đường dẫn đã bị cắt đầu cắt đuôi), ta truyền trực tiếp biến gốc `imageUri` (ví dụ: `content://media/external/images/...`) vào ML-Kit. ML-Kit sẽ đưa URI nguyên vẹn này xuống cho Android xử lý. Hệ điều hành đọc được file ảnh thành công, trích xuất văn bản và hoàn thành quá trình OCR cục bộ mà không gặp lỗi.

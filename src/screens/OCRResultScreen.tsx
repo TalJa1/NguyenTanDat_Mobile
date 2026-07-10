@@ -21,6 +21,8 @@ import RNFS from 'react-native-fs';
 import Geolocation from '@react-native-community/geolocation';
 import type { GeolocationResponse } from '@react-native-community/geolocation';
 import { SERVER_URL } from '@env';
+//! CHỈNH SỬA SỐ 1: Import thư viện ML-Kit cục bộ (Xem changelog_ocr.txt)
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { ScanStackParamList } from '../navigation/ScanStack';
@@ -121,13 +123,24 @@ export default function OCRResultScreen({ navigation, route }: Props) {
       const imageBase64 = await RNFS.readFile(filePath, 'base64');
       console.log('[OCR] Image base64 length:', imageBase64.length, 'chars (~', Math.round(imageBase64.length / 1024), 'KB)');
       console.log('[OCR] Sending to:', `${SERVER_URL}/ocr`);
-      const { data } = await axios.post<{ text: string }>(
-        `${SERVER_URL}/ocr`,
-        { image_base64: imageBase64 },
-        { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
-      );
-      console.log('[OCR] Response:', data);
-      const text = (data.text ?? '').trim();
+      
+      let text = '';
+      try {
+        const { data } = await axios.post<{ text: string }>(
+          `${SERVER_URL}/ocr`,
+          { image_base64: imageBase64 },
+          { headers: { 'Content-Type': 'application/json' }, timeout: 120000 },
+        );
+        console.log('[OCR] Response from server:', data);
+        text = (data.text ?? '').trim();
+      } catch (apiErr) {
+        console.log('[OCR] API failed, falling back to local ML Kit...', apiErr instanceof Error ? apiErr.message : String(apiErr));
+        //! CHỈNH SỬA SỐ 1 & 2: Bắt lỗi API và dự phòng quét ảnh bằng ML-Kit cục bộ với imageUri gốc (Xem changelog_ocr.txt)
+        // Use the original imageUri (with file:// or content:// scheme) for ML Kit
+        const result = await TextRecognition.recognize(imageUri);
+        text = (result.text ?? '').trim();
+      }
+
       setEditedText(text);
       setCharCount(text.length);
     } catch (err) {
