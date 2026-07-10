@@ -164,7 +164,7 @@ export default function ScanHistoryScreen() {
           <Text style={styles.cardDate}>📅 {formatDate(item.takenAt)}</Text>
           <Text style={styles.cardTime}>🕒 {formatTime(item.takenAt)}</Text>
         </View>
-        <Text style={styles.cardText}>{textPreview(item.text)}</Text>
+        <Text style={styles.cardText} numberOfLines={2}>{textPreview(item.text)}</Text>
         {item.latitude != null && item.longitude != null && (
           <TouchableOpacity
             style={styles.locationBadge}
