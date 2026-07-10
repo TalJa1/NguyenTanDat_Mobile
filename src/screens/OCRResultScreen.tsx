@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import RNFS from 'react-native-fs';
 import Geolocation from '@react-native-community/geolocation';
+import type { GeolocationResponse } from '@react-native-community/geolocation';
 import { SERVER_URL } from '@env';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
@@ -65,6 +66,7 @@ export default function OCRResultScreen({ navigation, route }: Props) {
   const [locating, setLocating] = useState(true);
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [locationError, setLocationError] = useState('');
 
   useEffect(() => {
     runOCR();
@@ -74,26 +76,42 @@ export default function OCRResultScreen({ navigation, route }: Props) {
 
   const fetchLocation = async () => {
     setLocating(true);
+    setLocationError('');
     try {
       const hasPermission = await requestLocationPermission();
       if (!hasPermission) {
         setLocating(false);
+        setLocationError('Chưa cấp quyền vị trí. Vui lòng cấp quyền trong Cài đặt.');
         return;
       }
+
+      const applyPosition = (pos: GeolocationResponse) => {
+        setLatitude(pos.coords.latitude.toFixed(6));
+        setLongitude(pos.coords.longitude.toFixed(6));
+        setLocating(false);
+      };
+
       Geolocation.getCurrentPosition(
-        pos => {
-          setLatitude(pos.coords.latitude.toFixed(6));
-          setLongitude(pos.coords.longitude.toFixed(6));
-          setLocating(false);
-        },
+        applyPosition,
         err => {
-          console.log('[LOCATION ERROR]', err.code, err.message);
-          setLocating(false);
+          console.log('[LOCATION ERROR] high-accuracy attempt failed:', err.code, err.message);
+          // GPS-only fix can fail indoors or on a cold start; fall back to a
+          // lower-accuracy (network/cell) fix with a longer timeout.
+          Geolocation.getCurrentPosition(
+            applyPosition,
+            err2 => {
+              console.log('[LOCATION ERROR] fallback attempt failed:', err2.code, err2.message);
+              setLocating(false);
+              setLocationError('Không thể lấy vị trí. Hãy bật GPS/vị trí và thử lại.');
+            },
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 60000 },
+          );
         },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 },
       );
     } catch {
       setLocating(false);
+      setLocationError('Không thể lấy vị trí. Hãy bật GPS/vị trí và thử lại.');
     }
   };
 
@@ -289,6 +307,9 @@ export default function OCRResultScreen({ navigation, route }: Props) {
                 </View>
               </View>
             )}
+            {!!locationError && (
+              <Text style={styles.locationErrorText}>{locationError}</Text>
+            )}
           </View>
 
           {/* Metadata preview */}
@@ -451,6 +472,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#111827',
     backgroundColor: '#f8fafc',
+  },
+  locationErrorText: {
+    fontSize: 12,
+    color: '#dc2626',
+    marginTop: 10,
   },
 
   metaCard: {
